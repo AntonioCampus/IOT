@@ -1,0 +1,1 @@
+C:\Users\anton\AppData\Local\Programs\Python\Python311\python.exe detector.py

@@ -3,14 +3,27 @@
 Bird Detector for IoT project
 tested with python 3.11.1
 
-the model url is:
-  "http://download.tensorflow.org/models/object_detection/tf2/20200711/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8.tar.gz"
+1.PIP installation:
+-------------------
+pip install -U --pre tensorflow=="2.*"
+pip install tf_slim
+pip install pycocotools
 
-save and extarct in datasets/ directory
 
-After extracted it the directory is going to have the following structure:
+2.Download the model:
+---------------------
+"http://download.tensorflow.org/models/object_detection/tf2/20200711/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8.tar.gz"
 
-  datasets/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/saved_model
+save and extract in datasets/ directory
+
+3. Install the requirments:
+---------------------------
+cd models/research/
+protoc object_detection/protos/*.proto --python_out=.
+cp object_detection/packages/tf2/setup.py .
+python -m pip install .
+
+
 """
 
 import numpy as np
@@ -66,8 +79,10 @@ class BirdDetector:
     
     return output_dict
   
+  
   def show_inference(self,model,image_path, category_index):
     image_np = np.array(Image.open(image_path))
+    print(image_np)
     output_dict = self.run_inference_for_single_image(model, image_np)
     
     classes = np.array(output_dict['detection_classes'])
@@ -79,7 +94,7 @@ class BirdDetector:
   
   def DetectBird(self,image_path):
     result = self.show_inference(self.detection_model,image_path,self.category_index)
-    if DEBUG ==1:
+    if DEBUG==1:
       print(result)
 
     for value in result.values():
