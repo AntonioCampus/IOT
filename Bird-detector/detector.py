@@ -3,6 +3,14 @@
 Bird Detector for IoT project
 tested with python 3.11.1
 
+the model url is:
+  "http://download.tensorflow.org/models/object_detection/tf2/20200711/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8.tar.gz"
+
+save and extarct in datasets/ directory
+
+After extracted it the directory is going to have the following structure:
+
+  datasets/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/saved_model
 """
 
 import numpy as np
