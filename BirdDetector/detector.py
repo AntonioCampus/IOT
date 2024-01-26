@@ -40,19 +40,20 @@ from object_detection.utils import label_map_util
 PATH_TO_TEST_IMAGES_DIR = pathlib.Path('test_images')
 TEST_IMAGE_PATHS = sorted(list(PATH_TO_TEST_IMAGES_DIR.glob("*.jpg")))
 PATH_TO_LABELS = 'models/research/object_detection/data/mscoco_label_map.pbtxt'
-DEBUG = 1
+DEBUG = 0
 
+MODEL_PATH = "datasets/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/saved_model"
 
-class BirdDetector:
-  def __init__(self):
+class BDetector:
+  def __init__(self,modelPath,labelPath):
     # patch tf1 into `utils.ops`
     utils_ops.tf = tf.compat.v1
     # Patch the location of gfile
     tf.gfile = tf.io.gfile
     
-    self.category_index = label_map_util.create_category_index_from_labelmap(PATH_TO_LABELS, use_display_name=True)
+    self.category_index = label_map_util.create_category_index_from_labelmap(labelPath, use_display_name=True)
     
-    self.detection_model = self.load_model('datasets/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/saved_model')
+    self.detection_model = self.load_model(modelPath)
   
   def load_model(self,path):
     model_dir = pathlib.Path(path)
@@ -106,7 +107,7 @@ class BirdDetector:
 
 
 if __name__ == '__main__': 
-  obj = BirdDetector()
+  obj = BDetector(MODEL_PATH,PATH_TO_LABELS)
   for image in TEST_IMAGE_PATHS:
     print("Enter to classify: {}".format(image))
     input()
