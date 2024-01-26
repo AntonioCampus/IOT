@@ -40,7 +40,6 @@ from object_detection.utils import label_map_util
 PATH_TO_TEST_IMAGES_DIR = pathlib.Path('test_images')
 TEST_IMAGE_PATHS = sorted(list(PATH_TO_TEST_IMAGES_DIR.glob("*.jpg")))
 PATH_TO_LABELS = 'models/research/object_detection/data/mscoco_label_map.pbtxt'
-DEBUG = 0
 
 MODEL_PATH = "datasets/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/saved_model"
 
@@ -54,6 +53,8 @@ class BDetector:
     self.category_index = label_map_util.create_category_index_from_labelmap(labelPath, use_display_name=True)
     
     self.detection_model = self.load_model(modelPath)
+
+    print("[*] Detector ready")
   
   def load_model(self,path):
     model_dir = pathlib.Path(path)
@@ -83,7 +84,6 @@ class BDetector:
   
   def show_inference(self,model,image_path, category_index):
     image_np = np.array(Image.open(image_path))
-    print(image_np)
     output_dict = self.run_inference_for_single_image(model, image_np)
     
     classes = np.array(output_dict['detection_classes'])
@@ -95,8 +95,6 @@ class BDetector:
   
   def DetectBird(self,image_path):
     result = self.show_inference(self.detection_model,image_path,self.category_index)
-    if DEBUG==1:
-      print(result)
 
     for value in result.values():
       if(value["name"] == "bird"):
@@ -104,11 +102,3 @@ class BDetector:
 
     return False
 
-
-
-if __name__ == '__main__': 
-  obj = BDetector(MODEL_PATH,PATH_TO_LABELS)
-  for image in TEST_IMAGE_PATHS:
-    print("Enter to classify: {}".format(image))
-    input()
-    print(obj.DetectBird(image))

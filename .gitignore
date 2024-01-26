@@ -1,2 +1,3 @@
 
-BirdDetector/datasets/
+server/BirdDetector/datasets/
+server/BirdDetector/__pycache__

@@ -1,1 +1,1 @@
-C:\Users\anton\AppData\Local\Programs\Python\Python311\python.exe main.py
+C:\Users\anton\AppData\Local\Programs\Python\Python311\python.exe runserver.py
