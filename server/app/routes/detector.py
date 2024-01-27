@@ -2,9 +2,6 @@
 
 from flask import request
 from app import app
-from config import Configuration
-
-conf = Configuration()
 
 
 from app.utils.message import message
@@ -19,7 +16,7 @@ def classifyImage():
         if("file" in request.files):
             image=request.files["file"]
             ob = message("Bird status detetction",
-                         "conf.detector.DetectBird(image)")
+                         app.config["DETECTOR_OBJ"].DetectBird(image))
             return ob.jsonMSG()
         
         return message("Wrong parameter",None).jsonMSG()
