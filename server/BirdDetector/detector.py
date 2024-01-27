@@ -95,7 +95,6 @@ class BDetector:
   
   def DetectBird(self,image_path):
     result = self.show_inference(self.detection_model,image_path,self.category_index)
-
     for value in result.values():
       if(value["name"] == "bird"):
         return True
