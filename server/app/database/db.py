@@ -13,7 +13,9 @@ class Database():
         self.connection.commit()
         self.connection.close()
     
-    def GetConnection(self):
-        return sqlite3.connect(self.database)
+    def OpenConnection(self):
+        self.connection =sqlite3.connect(self.database)
+        return self.connection
 
-
+    def CloseConnection(self):
+        self.connection.close()

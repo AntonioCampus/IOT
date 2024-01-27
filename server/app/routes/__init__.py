@@ -1,6 +1,6 @@
 
 from .home import *
 from .detector import*
-from .generateToken import*
+from .user import*
 
 from .profile import*
