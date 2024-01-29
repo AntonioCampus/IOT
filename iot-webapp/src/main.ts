@@ -1,7 +1,7 @@
 import './assets/css/style.css'
 import 'floating-vue/dist/style.css'
 
-import { createI18n } from 'vue-i18n';
+//import { createI18n } from 'vue-i18n';
 import lang from './assets/js/lang/lang';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -35,13 +35,13 @@ import router from './router'
 const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon);
 
-const i18n = createI18n({
+/* const i18n = createI18n({
     locale: 'en',
     fallbackLocale: 'en',
     messages: lang,
-});
+}); */
 
-app.use(i18n);
+//app.use(i18n);
 app.use(createPinia())
 app.use(router)
 app.use(FloatingVue)
