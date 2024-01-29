@@ -10,7 +10,7 @@ from flask_jwt_extended import create_access_token,\
 from app import *
 from app.utils.message import message
 
-
+from flask import jsonify
 
 @app.route('/api/user/login',methods=['GET',"POST"])
 def login():
@@ -18,6 +18,7 @@ def login():
         return message("Send Post Request",None).jsonMSG()
     
     if request.method == 'POST':
+        print("request",request.json)
         user = request.json.get("user", None)
         password = request.json.get("password", None)
 
@@ -27,19 +28,13 @@ def login():
         user=cursor.execute(query, (user, password)).fetchone()
 
         if user== None:
-            return message("Wrong credentials",None).jsonMSG()
-
+            return message("Wrong credentials",None).jsonMSG(),401
 
         access_token = create_access_token(identity=user)
         session["access_token"] = access_token
 
-        #embeds access token in the response
-        resp = message("access_token",access_token).jsonMSG()
-
-        #embeded access token also in the cookie
-        #set_access_cookies(resp, access_token)
-
-        return resp
+        resp = jsonify({"access_token":access_token})
+        return resp,200
 
 
 @app.route('/api/user/register',methods=['GET',"POST"])
@@ -61,3 +56,10 @@ def register():
         resp = message("Registration ok",None).jsonMSG()
 
         return resp
+    
+
+@app.route("/api/user/logout", methods=["POST"])
+def logout():
+    response = jsonify({"msg": "logout successful"})
+    unset_jwt_cookies(response)
+    return response

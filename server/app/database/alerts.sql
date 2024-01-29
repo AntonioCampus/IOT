@@ -1,55 +1,3 @@
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS alerts;
-DROP TABLE IF EXISTS devices;
-DROP TABLE IF EXISTS detectors;
-DROP TABLE IF EXISTS actuators;
-
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user TEXT NOT NULL,
-    pass TEXT NOT NULL
-);
-
-
-CREATE TABLE devices (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
-);
-
-
-CREATE TABLE detectors (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    FOREIGN KEY (id) REFERENCES devices(id)
-);
-
-CREATE TABLE actuators (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    FOREIGN KEY (id) REFERENCES devices(id)
-);
-
-
-CREATE TABLE alerts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    source INTEGER,
-    status BOOLEAN,
-    time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (source) REFERENCES devices(id)
-);
-
-
-INSERT INTO users (user, pass) VALUES ('admin', 'password');
-
-
-INSERT INTO devices (name) VALUES ('detector1');
-INSERT INTO devices (name) VALUES ('actuator2');
-
-
-INSERT INTO detectors (id) VALUES (1);
-INSERT INTO actuators (id) VALUES (2);
-
-
-
-insert into alerts (source, status, time) values (1, false, '2024-01-29 11:06:01');
 insert into alerts (source, status, time) values (1, false, '2023-06-05 08:06:01');
 insert into alerts (source, status, time) values (1, false, '2023-12-30 01:52:34');
 insert into alerts (source, status, time) values (1, false, '2023-06-12 13:51:22');
@@ -100,8 +48,3 @@ insert into alerts (source, status, time) values (1, true, '2024-01-18 21:22:41'
 insert into alerts (source, status, time) values (1, true, '2023-02-26 11:20:37');
 insert into alerts (source, status, time) values (1, true, '2023-02-09 19:44:14');
 insert into alerts (source, status, time) values (1, false, '2024-01-08 01:28:04');
-
-
-
-
-

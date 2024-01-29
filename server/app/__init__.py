@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 
 from config import Configuration
 from flask_jwt_extended import  JWTManager
@@ -8,6 +9,7 @@ from app.database.db import Database
 config = Configuration()
 
 app = Flask(__name__)
+CORS(app)
 app.config.from_object(config)
 
 app.secret_key = app.config["SESSION_KEY"]
