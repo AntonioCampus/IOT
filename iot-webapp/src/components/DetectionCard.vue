@@ -27,7 +27,7 @@ function openAlertOverview() {
             <font-awesome-icon :icon="['fas', 'camera']" />
         </div>
         <div class="content">
-            <p>[{{ new Date(props.time).toLocaleDateString() + ' ' + new Date(props.time).toLocaleTimeString() }}] Image
+            <p>[{{ props.time }}] Image
                 acquired
                 by Detector "{{ props.name }}"</p>
         </div>

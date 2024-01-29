@@ -7,18 +7,33 @@ import Loader from '@/components/Loader.vue';
 
 import { ref } from "vue";
 import { onMounted } from "vue";
+import getDashboard from "@/assets/api/getDashboard";
 
 const loading = ref(true);
 const detections_list = ref([]);
 const alerts_list = ref([]);
+const dashboard = ref([]);
+const active_detectors = ref(0);
+const detections_today = ref(0);
+
+function countUnique(iterable: any) {
+  return new Set(iterable).size;
+}
+
+function getDetectionsDay(iterable: any) {
+  return iterable.filter((detection: any) => detection[3].split(" ")[0] == new Date().toISOString().split("T")[0]);
+}
 
 onMounted(async () => {
-  const response = await fetch("https://65b2b4d29bfb12f6eafe4e4f.mockapi.io/detections");
-  if (response.ok) {
-    detections_list.value = await response.json();
-    alerts_list.value = detections_list.value.filter((detection) => detection["status"] === true);
+  const response = await getDashboard();
+  if (response != null) {
+    detections_list.value = response;
+    alerts_list.value = detections_list.value.filter((detection) => detection[2] == 1);
+    active_detectors.value = countUnique(detections_list.value.map((detection) => detection[1]));
+    detections_today.value = getDetectionsDay(detections_list.value).length;
     loading.value = false;
   }
+
 });
 </script>
 
@@ -30,23 +45,29 @@ onMounted(async () => {
         <SectionTitle title="Overview" />
         <div class="cards-list">
           <DataCard :icon="['fas', 'triangle-exclamation']" :number=0 label="Unchecked alerts" />
-          <DataCard :icon="['fa', 'clock']" :number=0 label="Detections/24h" />
+          <DataCard :icon="['fa', 'clock']" :number=detections_today label="Detections/24h" />
           <DataCard :icon="['fas', 'crow']" :number=0 label="Manual overrides today" />
-          <DataCard :icon="['fas', 'camera']" :number=1 label="Active detectors" />
+          <DataCard :icon="['fas', 'camera']" :number=active_detectors label="Active detectors" />
           <DataCard :icon="['fa', 'bug']" :number=0 label="Fault detected" />
         </div>
       </section>
       <section id="alerts-history">
         <SectionTitle title="Alerts history" />
-        <div class="alerts-list">
-          <AlertCard v-for="alert in alerts_list" :id="alert['id']" :time="alert['time']" :name="alert['name']" />
+        <div class="no-results" v-if="alerts_list.length == 0">
+          <p>No alerts found</p>
+        </div>
+        <div class="alerts-list" v-else>
+          <AlertCard v-for="alert in alerts_list" :id="alert[0]" :time="alert[3]" :name="alert[1]" />
         </div>
       </section>
       <section id="detections-history">
         <SectionTitle title="Last detections" />
-        <div class="alerts-list">
-          <DetectionCard v-for="detection in detections_list" :id="detection['id']" :time="detection['time']"
-            :name="detection['name']" />
+        <div class="no-results" v-if="alerts_list.length == 0">
+          <p>No detections found</p>
+        </div>
+        <div class="alerts-list" v-else>
+          <DetectionCard v-for="detection in detections_list" :id="detection[0]" :time="detection[3]"
+            :name="detection[1]" />
         </div>
       </section>
     </div>
@@ -62,6 +83,14 @@ main {
   display: flex;
   flex-direction: column;
   width: 100%;
+
+  .no-results {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: var(--secondary-color);
+  }
 
   .alerts-list {
     display: flex;

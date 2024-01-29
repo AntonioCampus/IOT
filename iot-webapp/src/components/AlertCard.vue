@@ -27,7 +27,7 @@ function openAlertOverview() {
             <font-awesome-icon :icon="['fas', 'triangle-exclamation']" />
         </div>
         <div class="content">
-            <p>[{{ new Date(props.time).toLocaleDateString() + ' ' + new Date(props.time).toLocaleTimeString() }}] Bird
+            <p>[{{ props.time }}] Bird
                 detected @ Detector "{{ props.name }}"'s zone</p>
         </div>
     </div>

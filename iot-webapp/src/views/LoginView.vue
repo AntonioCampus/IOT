@@ -3,14 +3,17 @@ import router from '@/router';
 import doLogin from '@/assets/api/doLogin';
 import { ref } from 'vue';
 import Swal from 'sweetalert2';
+import { useSessionStore } from '@/stores/session';
 
 const username = ref('');
 const password = ref('');
 
 async function login() {
-    if (await doLogin(username.value, password.value))
-        router.push('/dashboard');
-    else
+    let res = await doLogin(username.value, password.value)
+    if (res) {
+        let token = useSessionStore().getToken;
+        router.push({ path: '/dashboard' });
+    } else
         Swal.fire({
             title: "Oh no!!",
             text: "It seems that your credentials are wrong!",
