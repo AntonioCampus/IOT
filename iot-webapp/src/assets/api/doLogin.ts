@@ -2,7 +2,9 @@ import { useSessionStore } from "@/stores/session";
 
 export default async function doLogin(username: string, password: string) {
 
-    const response = await fetch('http://192.168.148.248:5000/api/user/login', {
+    const url = 'http://localhost:5000/api/user/login';
+    //const url = 'http://192.168.148.248:5000/api/user/login
+    const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

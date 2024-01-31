@@ -62,6 +62,31 @@ const lineOptions = {
     responsive: false,
     maintainAspectRatio: true
 }
+
+const barData2 = {
+    labels: ['Detector 1', 'Detector 2', 'Detector 3', 'Detector 4', 'Detector 5', 'Detector 6'],
+    datasets: [{
+        label: 'Faults',
+        data: [12, 19, 3, 5, 2, 3],
+        backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(255, 205, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(153, 102, 255, 0.2)'
+        ],
+        borderColor: [
+            'rgb(255, 99, 132)',
+            'rgb(255, 159, 64)',
+            'rgb(255, 205, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(54, 162, 235)',
+            'rgb(153, 102, 255)'
+        ],
+        borderWidth: 1
+    }]
+}
 </script>
 
 <template>
@@ -85,6 +110,12 @@ const lineOptions = {
                     <div class="chart">
                         <h3>Detections per month</h3>
                         <Line :data="lineData" :options="lineOptions" />
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="chart">
+                        <h3>Monthly faults per detector</h3>
+                        <Bar :data="barData2" />
                     </div>
                 </div>
             </div>

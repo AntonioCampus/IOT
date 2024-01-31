@@ -21,10 +21,14 @@ const props = defineProps({
         required: true
     }
 });
+
+const openAlertDetails = () => {
+    window.open('/alerts/' + props.id, "_blank");
+};
 </script>
 
 <template>
-    <div class="alert-card" :id="props.id">
+    <div class="alert-card" :id="props.id" @click="openAlertDetails">
         <div class="icon">
             <font-awesome-icon :icon="['fas', 'exclamation-triangle']" v-if="props.status" />
             <font-awesome-icon :icon="['fas', 'thumbs-up']" v-else />
