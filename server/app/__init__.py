@@ -4,7 +4,7 @@ from flask_cors import CORS
 from config import Configuration
 from flask_jwt_extended import  JWTManager
 from app.database.db import Database
-#from BirdDetector.detector import BDetector
+from BirdDetector.detector import BDetector
 
 config = Configuration()
 
@@ -20,10 +20,8 @@ db =  Database(app.config["DATABASEPATH"],
                app.config["SQLSCHEMA"])
 
 
-""""
 detector = BDetector(app.config["MODEL_PATH"],
                                 app.config["PATH_TO_LABELS"])
-"""
 
 
 from app import routes

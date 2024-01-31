@@ -17,7 +17,11 @@ void setup() {
   initializeScreenAndCamera();
 }
 
+int x = 1;
 
 void loop() {
-  processFrame();
+  if(x>0){
+    processFrame();
+    x--;
+  }
 }
