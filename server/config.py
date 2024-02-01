@@ -10,3 +10,5 @@ class Configuration:
     PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
     SESSION_KEY = "antonio"
     JWT_SECRET_KEY = "jwtPassword"
+    BROKER_ADDR = "mqtt.eclipseprojects.io"  
+    BROKER_PORT = 1883  

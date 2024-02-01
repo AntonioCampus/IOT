@@ -3,6 +3,8 @@ DROP TABLE IF EXISTS alerts;
 DROP TABLE IF EXISTS devices;
 DROP TABLE IF EXISTS detectors;
 DROP TABLE IF EXISTS actuators;
+DROP TABLE IF EXISTS zones;
+DROP TABLE IF EXISTS zone;
 
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -13,7 +15,10 @@ CREATE TABLE users (
 
 CREATE TABLE devices (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    idname TEXT NOT NULL,
+    passcode TEXT NOT NULL,
+    zone INTEGER,
+    FOREIGN KEY (zone) REFERENCES zones(id)
 );
 
 
@@ -37,14 +42,26 @@ CREATE TABLE alerts (
 );
 
 
+CREATE TABLE zones(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    info TEXT NOT NULL
+);
+
+
 INSERT INTO users (user, pass) VALUES ('admin', 'password');
 
 
-INSERT INTO devices (name) VALUES ('detector1');
-INSERT INTO devices (name) VALUES ('actuator2');
+INSERT INTO zones (info) VALUES ("Inzio pista");
+INSERT INTO zones (info) VALUES ("Fine pista");
+INSERT INTO zones (info) VALUES ("Vicino torre di controllo");
+INSERT INTO zones (info) VALUES ("Dio ti guarda!!");
+INSERT INTO zones (info) VALUES ("Vicino a nitti");
+
+INSERT INTO devices (idname,passcode,zone) VALUES ('actuator1',"123","1");
+INSERT INTO devices (idname,passcode,zone) VALUES ('actuator2',"123","2");
 
 
-INSERT INTO detectors (id) VALUES (1);
+INSERT INTO actuators (id) VALUES (1);
 INSERT INTO actuators (id) VALUES (2);
 
 
