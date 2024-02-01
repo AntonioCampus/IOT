@@ -6,7 +6,7 @@ import lang from './assets/js/lang/lang';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faTriangleExclamation, faClock, faCrow, faCamera, faBug, faCrosshairs, faRobot, faQuoteLeft, faClockRotateLeft, faPlus, faEye, faThumbsUp, faLocationDot, faAlignLeft, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTriangleExclamation, faClock, faCrow, faCamera, faBug, faCrosshairs, faRobot, faQuoteLeft, faClockRotateLeft, faPlus, faEye, faThumbsUp, faLocationDot, faAlignLeft, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faTriangleExclamation);
 library.add(faClock);
@@ -23,6 +23,7 @@ library.add(faThumbsUp);
 library.add(faLocationDot);
 library.add(faAlignLeft);
 library.add(faTrash);
+library.add(faUser);
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

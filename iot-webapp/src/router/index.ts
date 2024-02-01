@@ -7,6 +7,7 @@ import NotFoundViewVue from '@/views/404View.vue'
 import AlertViewVue from '@/views/AlertView.vue'
 import AllAlertsViewVue from '@/views/AllAlertsView.vue'
 import DetectorViewVue from '@/views/DetectorView.vue'
+import AdminDashboardBViewVue from '@/views/AdminDashboardBView.vue'
 import { useSessionStore } from '@/stores/session'
 
 const router = createRouter({
@@ -53,6 +54,11 @@ const router = createRouter({
       name: 'alert-overview',
       component: AlertViewVue
     },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: AdminDashboardBViewVue
+    }
   ]
 })
 

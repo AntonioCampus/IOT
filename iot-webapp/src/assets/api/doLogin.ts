@@ -2,7 +2,7 @@ import { useSessionStore } from "@/stores/session";
 
 export default async function doLogin(username: string, password: string) {
 
-    const url = 'http://localhost:5000/api/user/login';
+    const url = 'https://5e1e-192-167-140-78.ngrok-free.app/api/user/login';
     //const url = 'http://192.168.148.248:5000/api/user/login
     const response = await fetch(url, {
         method: 'POST',

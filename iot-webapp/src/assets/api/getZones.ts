@@ -1,7 +1,7 @@
 import { useSessionStore } from "@/stores/session";
 
 export default async function getDashboard() {
-    const response = await fetch('https://5e1e-192-167-140-78.ngrok-free.app/api/user/dashboard', {
+    const response = await fetch('https://5e1e-192-167-140-78.ngrok-free.app/api/zones', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -9,9 +9,9 @@ export default async function getDashboard() {
             "ngrok-skip-browser-warning": "69420",
         },
     });
-    let dashboard = null;
+    let zones = null;
     if (response.ok) {
-        dashboard = await response.json();
+        zones = await response.json();
     }
-    return dashboard;
+    return zones;
 }

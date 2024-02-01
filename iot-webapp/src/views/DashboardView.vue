@@ -4,6 +4,7 @@ import DetectionCard from "@/components/DetectionCard.vue";
 import SectionTitle from "@/components/SectionTitle.vue";
 import DataCard from "@/components/DataCard.vue";
 import Loader from '@/components/Loader.vue';
+import NoResultCard from "@/components/NoResultCard.vue";
 
 import { ref } from "vue";
 import { onMounted } from "vue";
@@ -53,18 +54,14 @@ onMounted(async () => {
       </section>
       <section id="alerts-history">
         <SectionTitle title="Alerts history" />
-        <div class="no-results" v-if="alerts_list.length == 0">
-          <p>No alerts found</p>
-        </div>
+        <NoResultCard v-if="alerts_list.length == 0" label="No alerts found" />
         <div class="alerts-list" v-else>
           <AlertCard v-for="alert in alerts_list" :id="alert[0]" :time="alert[3]" :name="alert[1]" />
         </div>
       </section>
       <section id="detections-history">
         <SectionTitle title="Last detections" />
-        <div class="no-results" v-if="alerts_list.length == 0">
-          <p>No detections found</p>
-        </div>
+        <NoResultCard v-if="detections_list.length == 0" label="No detections found" />
         <div class="alerts-list" v-else>
           <DetectionCard v-for="detection in detections_list" :id="detection[0]" :time="detection[3]"
             :name="detection[1]" />
@@ -83,14 +80,6 @@ main {
   display: flex;
   flex-direction: column;
   width: 100%;
-
-  .no-results {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    color: var(--secondary-color);
-  }
 
   .alerts-list {
     display: flex;
