@@ -15,7 +15,7 @@ import openDeleteDetectorModal from '@/assets/js/openDeleteDetectorModal'
             </div>
             <div class="detector-info">
                 <AlertDataRow :icon="['fas', 'robot']" label="ID" data="123vft5" />
-                <AlertDataRow :icon="['fas', 'location-dot']" label="Coordinates" data=".." />
+                <AlertDataRow :icon="['fas', 'location-dot']" label="Zone" data="1" />
                 <AlertDataRow :icon="['fas', 'clock-rotate-left']" label="Last activity" data=".." />
                 <AlertDataRow :icon="['fas', 'camera']" label="Last result" data="No detection" />
                 <AlertDataRow :icon="['fas', 'crow']" label="Detection rate" data="30%" />
