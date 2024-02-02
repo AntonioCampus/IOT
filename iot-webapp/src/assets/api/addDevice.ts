@@ -10,12 +10,12 @@ export default async function addDevice(idname: String, passcode: String, zone: 
      * @returns - The status of the request
     */
 
-    const body = JSON.stringify({
+    const body = {
         idname: idname,
         passcode: passcode,
         zone: zone,
         type: type
-    })
+    };
 
     const method = 'POST';
     const response = await doRequest('/devices/add', method, body);

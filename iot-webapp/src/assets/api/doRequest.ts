@@ -14,11 +14,12 @@ export default async function doRequest(path: string, method: string, body: any)
         "ngrok-skip-browser-warning": "69420", // ngrok header to skip browser warning
     };
 
-    const response = await fetch(Config.API_URL + path, {
-        method: method,
+    const options = {
+        method: method.toUpperCase(),
         headers: headers,
-        body: JSON.stringify(body)
-    });
+        body: body ? JSON.stringify(body) : null,
+    };
 
-    return response;
+    const url = Config.API_URL + path;
+    return await fetch(url, options);
 }
