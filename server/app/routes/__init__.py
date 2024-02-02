@@ -1,6 +1,8 @@
 
 from .home import *
-from .detector import*
-from .user import*
+from .devices import*
+from .users import*
 
-from .profile import*
+from .zones import *
+
+from .boom import *
