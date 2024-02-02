@@ -19,7 +19,7 @@ import router from '@/router';
                     :class="{ 'active': router.currentRoute.value.path == '/system' }">SYSTEM</li>
                 <li @click="router.push({ path: '/admin' })"
                     :class="{ 'active': router.currentRoute.value.path == '/admin' }">ADMIN</li>
-                <li>LOGOUT</li>
+                <li @click="router.push({ path: '/logout' })">LOGOUT</li>
             </ul>
         </div>
     </div>

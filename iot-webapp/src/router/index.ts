@@ -8,7 +8,8 @@ import AlertViewVue from '@/views/AlertView.vue'
 import AllAlertsViewVue from '@/views/AllAlertsView.vue'
 import DetectorViewVue from '@/views/DetectorView.vue'
 import AdminDashboardBViewVue from '@/views/AdminDashboardBView.vue'
-import { useSessionStore } from '@/stores/session'
+import LogoutViewVue from '@/views/LogoutView.vue'
+import { getToken } from '@/assets/js/token'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,7 +18,7 @@ const router = createRouter({
       path: '/',
       name: 'login',
       component: LoginViewVue,
-      alias: '/login'
+      alias: '/login',
     },
     {
       path: '/dashboard',
@@ -58,13 +59,16 @@ const router = createRouter({
       path: '/admin',
       name: 'admin',
       component: AdminDashboardBViewVue
+    },
+    {
+      path: '/logout',
+      name: 'logout',
+      component: LogoutViewVue,
     }
   ]
 })
 
-/* router.beforeEach((to, from) => {
-  if (to.path !== '/' && useSessionStore().getToken === '') {
-    return { path: '/' }
-  }
-}) */
+router.beforeEach((to, from) => {
+  if (to.path !== '/' && getToken() === null) return { path: '/' }
+})
 export default router

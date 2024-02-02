@@ -3,10 +3,10 @@ import { defineStore } from 'pinia'
 
 export const useSessionStore = defineStore('session', () => {
   const token = ref('')
-  const getToken = computed(() => token.value)
+  const getToken = computed(() => localStorage.getItem('user_token'))
 
   function setToken(new_token: string) {
-    token.value = new_token
+    localStorage.setItem('user_token', new_token)
   }
 
   return { getToken, setToken }

@@ -1,5 +1,5 @@
-import { useSessionStore } from "@/stores/session";
 import Config from "@/config/config";
+import { getToken } from "../js/token";
 
 function isHTPPMethod(method: string) {
     return ['GET', 'POST', 'PUT', 'DELETE'].includes(method.toUpperCase());
@@ -10,7 +10,7 @@ export default async function doRequest(path: string, method: string, body: any)
 
     const headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + useSessionStore().getToken, // auth token
+        'Authorization': 'Bearer ' + getToken(), // auth token
         "ngrok-skip-browser-warning": "69420", // ngrok header to skip browser warning
     };
 

@@ -1,5 +1,5 @@
 import doRequest from "./doRequest";
-import { useSessionStore } from "@/stores/session";
+import { setToken } from "../js/token";
 
 export default async function doLogin(username: string, password: string) {
     const body = {
@@ -11,7 +11,7 @@ export default async function doLogin(username: string, password: string) {
 
     if (response && response.ok) {
         const data = await response.json();
-        useSessionStore().setToken(data.access_token);
+        setToken(data.access_token);
         return true;
     }
     return false;
