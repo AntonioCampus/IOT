@@ -4,7 +4,6 @@ import LoginViewVue from '@/views/LoginView.vue'
 import SystemViewVue from '@/views/SystemView.vue'
 import StatisticsViewVue from '@/views/StatisticsView.vue'
 import NotFoundViewVue from '@/views/404View.vue'
-import AlertViewVue from '@/views/AlertView.vue'
 import AllAlertsViewVue from '@/views/AllAlertsView.vue'
 import DetectorViewVue from '@/views/DetectorView.vue'
 import AdminDashboardBViewVue from '@/views/AdminDashboardBView.vue'
@@ -49,11 +48,6 @@ const router = createRouter({
       path: '/alerts',
       name: 'all-alerts',
       component: AllAlertsViewVue
-    },
-    {
-      path: '/alerts/:id',
-      name: 'alert-overview',
-      component: AlertViewVue
     },
     {
       path: '/admin',

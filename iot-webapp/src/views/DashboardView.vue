@@ -13,7 +13,6 @@ import getDashboard from "@/assets/api/getDashboard";
 const loading = ref(true);
 const detections_list = ref([]);
 const alerts_list = ref([]);
-const dashboard = ref([]);
 const active_detectors = ref(0);
 const detections_today = ref(0);
 

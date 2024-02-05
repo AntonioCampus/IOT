@@ -3,16 +3,18 @@ import SectionTitle from "@/components/SectionTitle.vue";
 import AlertListCard from "@/components/AlertListCard.vue";
 import Loader from '@/components/Loader.vue';
 import { ref, onMounted } from "vue";
+import getDashboard from "@/assets/api/getDashboard";
+import router from "@/router";
 
 const loading = ref(true);
 const detections_list = ref([]);
 
 onMounted(async () => {
-    const response = await fetch("https://65b2b4d29bfb12f6eafe4e4f.mockapi.io/detections");
-    if (response.ok) {
-        detections_list.value = await response.json();
+    const response = await getDashboard();
+    if (response != null) {
+        detections_list.value = response;
         loading.value = false;
-    }
+    } else router.push({ name: 'login' });
 });
 </script>
 
@@ -22,8 +24,8 @@ onMounted(async () => {
         <section>
             <SectionTitle title="All alerts" />
             <div class="alerts-list">
-                <AlertListCard v-for="detection in detections_list" :id="detection['id']" :date="detection['time']"
-                    :name="detection['name']" :status="detection['status']" :detector="detection['detector']" />
+                <AlertListCard v-for="detection in detections_list" :id="detection[0]" :date="detection[3]"
+                    :name="detection[0]" :status="detection[2]" :detector="detection[1]" />
             </div>
         </section>
     </main>

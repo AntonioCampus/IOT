@@ -59,12 +59,6 @@ def addDevice():
         return jsonify({"status":status})
 
 
-
-       
-
-
-
-
 @app.route('/api/devices/classify',methods=['GET', 'POST'])
 def classifyImage():
     if request.method == 'GET':
@@ -72,7 +66,7 @@ def classifyImage():
     if request.method == 'POST':
         if("file" in request.files):
             image=request.files["file"]
-            status = True #detector.DetectBird(image)
+            status = detector.DetectBird(image)
             if(status):
                 MQTT.publish(app.config["BROKER_ADDR"],
                 app.config["BROKER_PORT"],

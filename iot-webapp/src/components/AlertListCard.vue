@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Swal from 'sweetalert2';
+
 const props = defineProps({
     id: {
         type: String,
@@ -23,7 +25,18 @@ const props = defineProps({
 });
 
 const openAlertDetails = () => {
-    window.open('/alerts/' + props.id, "_blank");
+    Swal.fire({
+        title: 'Alert details',
+        icon: 'info',
+        html: `
+            <p><strong>ID:</strong> ${props.id}</p>
+            <p><strong>Date:</strong> ${props.date}</p>
+            <p><strong>Detector:</strong> ${props.detector}</p>
+            <p><strong>Status:</strong> ${props.status ? 'Detected' : 'Unchecked'}</p>
+        `,
+        showConfirmButton: true,
+        confirmButtonText: 'Close'
+    });
 };
 </script>
 
