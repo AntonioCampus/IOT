@@ -27,9 +27,14 @@ def login():
         return jsonify({"msg": "Send post request"})
     
     if request.method == 'POST':
-        print("request",request.json)
         user = request.json.get("user", None)
         password = request.json.get("password", None)
+
+        if(user == None or 
+           password == None):
+            return jsonify({"error":"Invalid paramters",
+                            "status":False})
+
 
         cursor = db.OpenConnection().cursor()
 
@@ -37,8 +42,9 @@ def login():
         user=list(cursor.execute(query, (user, password)).fetchone())
         
 
-        if user== None:
-            return jsonify({"error": "Wrong credentials"}),401
+        if user==None:
+            return jsonify({"error": "Wrong credentials",
+                            "status":False})
         
 
         additional_claims = {"isAdmin": user[3],
@@ -48,9 +54,7 @@ def login():
                                            additional_claims=additional_claims)
         
         session["access_token"] = access_token
-
-        resp = jsonify({"access_token":access_token})
-        return resp,200
+        return jsonify({"access_token":access_token})
 
 
 @app.route(API_NAME+"/register",methods=['GET',"POST"])
@@ -62,29 +66,31 @@ def register():
     if request.method == 'POST':
         isAdmin = get_jwt()["isAdmin"]
         if(isAdmin != True):
-           return jsonify({"error":"Invalid privilages"}),401
+           return jsonify({"error":"Invalid privilages",
+                           "status":False})
         
         user = request.json.get("user", None)
         password = request.json.get("password", None)
         isAdmin = request.json.get("isAdmin",None)
 
         if(user == None or 
-           password == None):
-            return jsonify({"error":"Invalid paramters"})
+           password == None or
+           isAdmin == None):
+            return jsonify({"error":"Invalid paramters",
+                            "status":False})
 
         try:
             conn = db.OpenConnection()
             cursor = conn.cursor()
-
             query = "INSERT INTO users (user, pass,isAdmin) VALUES (?, ?, ?)"
             cursor.execute(query, (user, password, isAdmin))
             conn.commit()
+            return jsonify({"status":True})
         except:
-            pass
+            return jsonify({"error":"adding new user",
+                            "status":False})
 
-        resp = message("Registration ok",None).jsonMSG()
 
-        return resp
     
 @app.route(API_NAME+"/", methods=["GET","POST"])
 @jwt_required()
@@ -95,7 +101,8 @@ def GetUsers():
         data=cursor.execute(query).fetchall()
         return jsonify(data),200
     except:
-        jsonify({"error":"Getting Users"}),500
+        jsonify({"error":"Getting Users",
+                 "status":False})
 
     
 
@@ -109,12 +116,14 @@ def removeUser():
     if request.method == 'POST':
         isAdmin = get_jwt()["isAdmin"]
         if(isAdmin != True):
-           return jsonify({"error":"Invalid privilages"}),401
+           return jsonify({"error":"Invalid privilages",
+                           "status":False})
         
         UserId = request.json.get("UserId", None)
 
         if(UserId == None):
-            return jsonify({"error":"Invalid paramters"})
+            return jsonify({"error":"Invalid paramters",
+                            "status":False})
 
         conn = db.OpenConnection()
         cursor = conn.cursor()
@@ -134,11 +143,16 @@ def removeUser():
 @app.route(API_NAME+"/listoverrides",methods=['GET'])
 @jwt_required()
 def ListOvverride():
-    cursor = db.OpenConnection().cursor()
-    query = "SELECT * FROM ovverides"
-    data=cursor.execute(query).fetchall()
+    try:
+        cursor = db.OpenConnection().cursor()
+        query = "SELECT * FROM ovverides"
+        data=cursor.execute(query).fetchall()
+        return jsonify(data),200
+    except:
+        return jsonify({"error": "Getting Ovverides",
+                        "status":False})
 
-    return jsonify(data),200
+   
 
 
 
@@ -154,11 +168,13 @@ def boom():
         userid = get_jwt()["userId"]
         isAdmin = get_jwt()["isAdmin"]
         if(isAdmin != True):
-           return jsonify({"error":"Invalid privilages"}),401
+           return jsonify({"error":"Invalid privilages",
+                           "status":False})
         
 
         if(zone == None):
-            return jsonify({"error":"Invalid paramters"})
+            return jsonify({"error":"Invalid paramters",
+                            "status":False})
         
         try:
             MQTT.publish(app.config["BROKER_ADDR"],
@@ -166,26 +182,33 @@ def boom():
                     zone,
                     "1")
         except:
-            return jsonify({"MQTT":"Error"})
+            return jsonify({"error":"Mqtt Error",
+                            "status":False})
         
 
+        try:
+            conn = db.OpenConnection()
+            cursor = conn.cursor()
 
-        conn = db.OpenConnection()
-        cursor = conn.cursor()
-
-        query = "INSERT INTO ovverides (userId, zone) VALUES (?, ?)"
-        cursor.execute(query, (userid,zone))
-        conn.commit()
-
-        return jsonify({"status":"ok"})
+            query = "INSERT INTO ovverides (userId, zone) VALUES (?, ?)"
+            cursor.execute(query, (userid,zone))
+            conn.commit()
+            return jsonify({"status":True})
+        except:
+            return jsonify({"error":"Logging Ovveride",
+                            "status":False})
 
 
 @app.route(API_NAME+"/dashboard")
 @jwt_required()
 def dashboard():
-    
-    cursor = db.OpenConnection().cursor()
-    query = "SELECT * FROM alerts"
-    data=cursor.execute(query).fetchall()
+    try:
+        cursor = db.OpenConnection().cursor()
+        query = "SELECT * FROM alerts"
+        data=cursor.execute(query).fetchall()
+        return jsonify(data)
+    except:
+        return jsonify({"error":"Getting allert",
+                            "status":False})
 
-    return jsonify(data),200
+    

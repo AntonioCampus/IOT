@@ -53,6 +53,8 @@ def loginDevice():
         return resp,200
 
 
+
+
 @app.route(API_NAME+"/remove",methods=['GET', 'POST'])
 def RemoveDevice():
     if request.method == 'GET':
@@ -70,23 +72,24 @@ def RemoveDevice():
         
         query2 = "DELETE FROM devices WHERE id = ?"
 
-        status = True
 
         if(deviceType == "actuator"):
             query1 = "DELETE FROM actuators WHERE id=?"
-            print("Ok")
         elif(deviceType == "detector"):
             query1 = "DELETE FROM detector WHERE id=?"
         else:
             return jsonify({"error":"Invalid device type",
                             "status":False})
         
+        try:
+            cursor.execute(query1, (deviceId,))
+            cursor.execute(query2, (deviceId,))
+            conn.commit()
+        except:
+            return jsonify({"error":"Deleting device",
+                            "status":False})
 
-        cursor.execute(query1, (deviceId,))
-        cursor.execute(query2, (deviceId,))
-        conn.commit()
-
-        return jsonify({"status":status})
+        return jsonify({"status":True})
 
 @app.route(API_NAME+"/",methods=['GET'])
 def GetDevices():
@@ -96,9 +99,29 @@ def GetDevices():
     return jsonify(data),200
 
 
+@app.route(API_NAME+"/listdetectors",methods=['GET'])
+def GetDetector():
+    try:
+        cursor = db.OpenConnection().cursor()
+        query = "SELECT * FROM devices WHERE id IN (SELECT id FROM detectors)"
+        data=cursor.execute(query).fetchall()
+        return jsonify(data)
+    except:
+        return jsonify({"error": "Getting detectors",
+                        "status":False})
 
+@app.route(API_NAME+"/listactuators",methods=['GET'])
+def GetActuators():
+    try:
+        cursor = db.OpenConnection().cursor()
+        query = "SELECT * FROM devices WHERE id IN (SELECT id FROM actuators)"
+        data=cursor.execute(query).fetchall()
+        return jsonify(data)
+    except:
+         return jsonify({"error": "Getting Actuators",
+                        "status":False})
 
-
+    
 
 @app.route(API_NAME+"/add",methods=['GET', 'POST'])
 def addDevice():
@@ -117,7 +140,8 @@ def addDevice():
            passcode == None or
            zone==None or 
            deviceType==None):
-            return jsonify({"error":"Invalid paramters"})
+            return jsonify({"error":"Invalid paramters",
+                            "status":False})
 
         conn = db.OpenConnection()
         cursor = conn.cursor()
@@ -133,15 +157,15 @@ def addDevice():
             return jsonify({"error":"Invalid device type",
                             "status":False})
 
+        status = True
         try:
             cursor.execute(query, (idname, passcode,zone))
             newInsertedId = cursor.lastrowid
-            status = True
+            
         except:
             status = False
         try:
             cursor.execute(query2, (newInsertedId,))
-            status = True
         except:
             conn.rollback()
             status = False
@@ -157,7 +181,8 @@ def addDevice():
 @jwt_required()
 def classifyImage():
     if request.method == 'GET':
-        return jsonify({"Warning":"Send post request"})
+        return jsonify({"Warning":"Send post request",
+                        "status":False})
     if request.method == 'POST':
         if("file" in request.files):
             time = datetime.now()
@@ -183,7 +208,8 @@ def classifyImage():
             cursor.execute(query, (zoneId, DeviceId ,status, time))
             conn.commit()        
 
-            return jsonify({"status":"ok",
+            return jsonify({"status":True,
                             "Birddetected":status})
         
-        return jsonify({"Warning":"Wrong parameter"})
+        return jsonify({"Warning":"Wrong parameter",
+                        "status":False})
