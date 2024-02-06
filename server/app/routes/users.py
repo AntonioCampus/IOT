@@ -131,6 +131,17 @@ def removeUser():
         return jsonify({"status":status})
 
 
+@app.route(API_NAME+"/listoverrides",methods=['GET'])
+@jwt_required()
+def ListOvverride():
+    cursor = db.OpenConnection().cursor()
+    query = "SELECT * FROM ovverides"
+    data=cursor.execute(query).fetchall()
+
+    return jsonify(data),200
+
+
+
 @app.route(API_NAME+"/override",methods=['GET', 'POST'])
 @jwt_required()
 def boom():

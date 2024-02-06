@@ -65,6 +65,10 @@ CREATE TABLE zones(
 INSERT INTO users (user, pass,isAdmin) VALUES ('admin', 'password',true);
 INSERT INTO users (user, pass,isAdmin) VALUES ('anto', '123',false);
 
+INSERT INTO ovverides ( userId,zone,time) VALUES (1, 1,'2024-01-29 11:06:01');
+INSERT INTO ovverides ( userId,zone,time) VALUES (1, 1,'2024-04-29 11:06:01');
+INSERT INTO ovverides ( userId,zone,time) VALUES (1, 1,'2024-01-39 11:06:01');
+
 
 INSERT INTO zones (info) VALUES ("Inzio pista");
 INSERT INTO zones (info) VALUES ("Fine pista");
