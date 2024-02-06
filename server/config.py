@@ -11,4 +11,4 @@ class Configuration:
     SESSION_KEY = "antonio"
     JWT_SECRET_KEY = "jwtPassword"
     BROKER_ADDR = "mqtt.eclipseprojects.io"  
-    BROKER_PORT = 1883  
+    BROKER_PORT = 1883 
