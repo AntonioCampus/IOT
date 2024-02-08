@@ -4,8 +4,18 @@ import { ref } from 'vue';
 
 // @ts-ignore
 import { useI18n } from 'vue-i18n';
-
 const { t } = useI18n();
+
+import { useDark } from "@vueuse/core";
+
+const isDark = useDark({
+    selector: 'html',
+    attribute: "theme", // attribute name
+    valueDark: "dark", // attribute value for dark mode
+    valueLight: "light", // attribute value for light mode
+    initialValue: 'light', // initial value
+    storageKey: 'theme', // key for localStorage
+});
 </script>
 
 <template>
@@ -17,6 +27,10 @@ const { t } = useI18n();
             <select v-model="$i18n.locale">
                 <option v-for="locale in $i18n.availableLocales" :key="`locale-${locale}`" :value="locale">{{ locale }}
                 </option>
+            </select>
+            <select v-model="isDark">
+                <option :value="true">Dark Mode</option>
+                <option :value="false" selected>Light Mode</option>
             </select>
         </div>
     </div>
