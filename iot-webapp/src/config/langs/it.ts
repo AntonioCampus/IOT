@@ -161,6 +161,13 @@ export default {
         new_user_lbl: 'Inserisci il nome utente dell\'utente. Sarà utilizzato per il login.',
         invalid_username: 'Nome utente non valido, controlla l\'inserimento e riprova.',
         add_user: 'Aggiungi utente',
+        new_user_psw: 'Inserisci la password dell\'utente. Sarà utilizzata per il login.',
+        invalid_password: 'Password non valida, controlla l\'inserimento e riprova.',
+        give_privileges: 'Conferire privilegi amministrativi all\'utente?',
+        yes_give: 'Sì, attribuisci poteri amministrativi!',
+        added_user_title: 'Utente aggiunto',
+        added_user_txt: 'L\'utente è stato aggiunto con successo.',
+        add_error: 'Si è verificato un errore durante l\'aggiunta dell\'utente, riprova più tardi.',
     },
     no_page: {
         message: 'Sembra che alcuni volatili abbiano sabotato questa pagina!',

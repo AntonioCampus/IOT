@@ -161,6 +161,13 @@ export default {
         new_user_lbl: 'Please enter the username of the user. It will be used for login.',
         invalid_username: 'Invalid username, please check your input and try again.',
         add_user: 'Add user',
+        new_user_psw: 'Please enter the password of the user. It will be used for login.',
+        invalid_password: 'Invalid password, please check your input and try again.',
+        give_privileges: 'Give admin privileges to the user?',
+        yes_give: 'Yes, give them!',
+        added_user_title: 'User added',
+        added_user_txt: 'The user has been added successfully.',
+        add_error: 'An error occurred while adding the user, please try again later.',
     },
     no_page: {
         message: 'It seems that some birds sabotaged this page!',

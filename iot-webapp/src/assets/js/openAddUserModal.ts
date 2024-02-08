@@ -29,17 +29,17 @@ function getUsername(new_user: { username: string; password: string; privileged:
 function getPassword(new_user: { username: string; password: string; privileged: string; }) {
     return Swal.fire({
         icon: 'info',
-        title: 'Set a new user',
-        text: 'Please enter the password of the user. It will be used for login.',
+        title: t('users.new_user'),
+        text: t('users.new_user_psw'),
         input: 'password',
         showCancelButton: true,
-        confirmButtonText: 'Next &rarr;',
+        confirmButtonText: t('common.next_btn'),
         showLoaderOnConfirm: true,
-        cancelButtonText: 'Cancel',
+        cancelButtonText: t('common.cancel'),
         progressSteps: ['1', '2', '3'],
         currentProgressStep: 1,
         inputValidator: (value) => {
-            if (!value || !value.match(/[\s\W]/)) return 'Invalid password, please check your input and try again.'
+            if (!value || !value.match(/[\s\W]/)) return t('users.invalid_password');
             else new_user.password = value;
         },
     })
@@ -48,16 +48,16 @@ function getPassword(new_user: { username: string; password: string; privileged:
 function setPrivileged(new_user: { username: string; password: string; privileged: string; }) {
     return Swal.fire({
         icon: 'info',
-        title: 'Set a new user',
-        text: 'Do you want to give this user admin privileges?',
+        title: t('users.new_user'),
+        text: t('users.give_privileges'),
         showCancelButton: true,
-        confirmButtonText: 'Next &rarr;',
+        confirmButtonText: t('common.next_btn'),
         showLoaderOnConfirm: true,
-        cancelButtonText: 'Cancel',
+        cancelButtonText: t('common.cancel'),
         progressSteps: ['1', '2', '3'],
         currentProgressStep: 2,
         input: 'checkbox',
-        inputPlaceholder: 'Yes, give this user admin privileges',
+        inputPlaceholder: t('users.yes_give'),
         inputValidator: (value) => {
             new_user.privileged = value;
         },
@@ -81,18 +81,18 @@ export default function openAddUserModal() {
                                 const res = await addUser(new_user.username, new_user.password, Boolean(new_user.privileged));
                                 if (res) Swal.fire({
                                     icon: 'success',
-                                    title: 'User added',
-                                    text: 'The user has been added successfully.',
+                                    title: t('users.added_user_title'),
+                                    text: t('users.added_user_txt'),
                                 });
                                 else Swal.fire({
                                     icon: 'error',
-                                    title: 'Error',
-                                    text: 'An error occurred while adding the user. Please try again later.',
+                                    title: t('common.error'),
+                                    text: t('users.add_error')
                                 });
                             } else Swal.fire({
                                 icon: 'error',
-                                title: 'Error',
-                                text: 'An error occurred while sending the OTP. Please try again later.',
+                                title: t('common.error'),
+                                text: t('common.wrong_otp'),
                             })
                         }
                     });
