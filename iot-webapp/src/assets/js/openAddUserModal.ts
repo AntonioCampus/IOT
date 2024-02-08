@@ -1,21 +1,26 @@
 import Swal from 'sweetalert2';
 import sendOTP from './sendOTP';
 import addUser from '../api/addUser';
+import config from '@/config';
+
+// @ts-ignore
+import i18n from '@/config/i18n'
+const { t } = i18n.global
 
 function getUsername(new_user: { username: string; password: string; privileged: string; }) {
     return Swal.fire({
         icon: 'info',
-        title: 'Set a new user',
-        text: 'Please enter the username of the user. It will be used for login.',
+        title: t('users.new_user'),
+        text: t('users.new_user_lbl'),
         input: 'text',
         showCancelButton: true,
-        confirmButtonText: 'Next &rarr;',
+        confirmButtonText: t('common.next_btn'),
         showLoaderOnConfirm: true,
-        cancelButtonText: 'Cancel',
+        cancelButtonText: t('common.cancel'),
         progressSteps: ['1', '2', '3'],
         currentProgressStep: 0,
         inputValidator: (value) => {
-            if (!value || !value.match(/[a-zA-A0-9]/)) return 'Invalid username, please check your input and try again.'
+            if (!value || !value.match(/[a-zA-A0-9]/)) return t('users.invalid_username');
             else new_user.username = value;
         },
     })
@@ -71,7 +76,7 @@ export default function openAddUserModal() {
                 if (result.isConfirmed) {
                     setPrivileged(new_user).then(async (result) => {
                         if (result.isConfirmed) {
-                            const mfa = await sendOTP('134723339');
+                            const mfa = await sendOTP(config.TELEGRAM_ADMIN_CHAT_ID);
                             if (mfa) {
                                 const res = await addUser(new_user.username, new_user.password, Boolean(new_user.privileged));
                                 if (res) Swal.fire({

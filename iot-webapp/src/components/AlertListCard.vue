@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import Swal from 'sweetalert2';
+import { onMounted, ref } from 'vue';
 
+// @ts-ignore
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+
+const tooltip = ref('');
 const props = defineProps({
     id: {
         type: String,
         required: true
     },
-    name: {
+    zone: {
         type: String,
         required: true
     },
@@ -26,29 +32,34 @@ const props = defineProps({
 
 const openAlertDetails = () => {
     Swal.fire({
-        title: 'Alert details',
+        title: t('alert_card.title'),
         icon: 'info',
         html: `
             <p><strong>ID:</strong> ${props.id}</p>
-            <p><strong>Date:</strong> ${props.date}</p>
+            <p><strong>${t('common.date')}:</strong> ${props.date}</p>
             <p><strong>Detector:</strong> ${props.detector}</p>
-            <p><strong>Status:</strong> ${props.status ? 'Detected' : 'Unchecked'}</p>
+            <p><strong>${t('common.zone')}:</strong> ${props.zone}</p>
+            <p><strong>Status:</strong> ${props.status ? t('common.detected') : t('common.no_detected')}</p>
         `,
         showConfirmButton: true,
-        confirmButtonText: 'Close'
+        confirmButtonText: t('common.close')
     });
 };
+
+onMounted(() => {
+    tooltip.value = props.status ? 'Bird detected' : 'No detection';
+});
 </script>
 
 <template>
-    <div class="alert-card" :id="props.id" @click="openAlertDetails">
+    <div class="alert-card" :id="props.id" @click="openAlertDetails" v-tooltip="tooltip">
         <div class="icon">
             <font-awesome-icon :icon="['fas', 'exclamation-triangle']" v-if="props.status" />
             <font-awesome-icon :icon="['fas', 'thumbs-up']" v-else />
         </div>
         <div class="data">
-            <h3>Detection by: {{ props.name }}</h3>
-            <p>{{ props.date + ' - ' + props.detector }}</p>
+            <h3>Detector {{ props.detector }}</h3>
+            <p>{{ props.date + ' - ' + t('common.zone') + ':' + props.zone }}</p>
         </div>
     </div>
 </template>
@@ -62,7 +73,7 @@ const openAlertDetails = () => {
     color: var(--black);
     box-shadow: 0 0 2rem rgba(0, 0, 0, 0.2);
     margin: 1rem;
-    width: 90%;
+    width: 60vw;
 
     .icon {
         font-size: 2rem;

@@ -9,6 +9,10 @@ import DetectorViewVue from '@/views/DetectorView.vue'
 import AdminDashboardBViewVue from '@/views/AdminDashboardBView.vue'
 import LogoutViewVue from '@/views/LogoutView.vue'
 import { getToken } from '@/assets/js/token'
+import { useUserStore } from '@/stores/user'
+import FaultsViewVue from '@/views/FaultsView.vue'
+import OverridesViewVue from '@/views/OverridesView.vue'
+import ActuatorViewVue from '@/views/ActuatorView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,6 +40,11 @@ const router = createRouter({
       component: DetectorViewVue
     },
     {
+      path: '/system/actuators/:id',
+      name: 'actuator-overview',
+      component: ActuatorViewVue
+    },
+    {
       path: '/statistics',
       name: 'stats',
       component: StatisticsViewVue
@@ -58,11 +67,22 @@ const router = createRouter({
       path: '/logout',
       name: 'logout',
       component: LogoutViewVue,
+    },
+    {
+      path: '/faults',
+      name: 'faults',
+      component: FaultsViewVue
+    },
+    {
+      path: '/overrides',
+      name: 'overrides',
+      component: OverridesViewVue
     }
   ]
 })
 
 router.beforeEach((to, from) => {
   if (to.path !== '/' && getToken() === null) return { path: '/' }
+  if (to.path === '/admin' && !useUserStore().isAdmin) return { path: '/' }
 })
 export default router

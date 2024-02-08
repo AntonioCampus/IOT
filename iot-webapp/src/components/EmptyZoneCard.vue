@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { vTooltip } from 'floating-vue'
+// @ts-ignore
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
-const tooltip = "Add a new zone"
 </script>
 
 <template>
-    <div class="empty-zone-card" id="" v-tooltip="tooltip">
+    <div class="empty-zone-card" id="" v-tooltip="t('system.add_zone')">
         <div class="content">
             <font-awesome-icon :icon="['fas', 'plus']" />
         </div>

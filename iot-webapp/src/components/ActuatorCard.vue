@@ -1,12 +1,29 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import router from '@/router';
+
+const props = defineProps({
+    id: {
+        type: String,
+        required: true
+    },
+    name: {
+        type: String,
+        required: true
+    }
+});
+
+function openActuatorPage() {
+    router.push('system/actuators/' + props.id);
+}
+</script>
 
 <template>
-    <div class="detector-card" id="">
+    <div class="detector-card" :id="props.id" @click="openActuatorPage">
         <div class="header">
             <font-awesome-icon :icon="['fas', 'crosshairs']" />
         </div>
         <div class="data">
-            <p>Actuator #1</p>
+            <p>{{ props.name }}</p>
         </div>
     </div>
 </template>

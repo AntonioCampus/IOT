@@ -3,7 +3,10 @@ import router from '@/router';
 import doLogin from '@/assets/api/doLogin';
 import { ref } from 'vue';
 import Swal from 'sweetalert2';
-import { useSessionStore } from '@/stores/session';
+import Config from '@/config';
+// @ts-ignore
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const username = ref('');
 const password = ref('');
@@ -11,17 +14,16 @@ const password = ref('');
 async function login() {
     let res = await doLogin(username.value, password.value)
     if (res) {
-        let token = useSessionStore().getToken;
         router.push({ path: '/dashboard' });
     } else
         Swal.fire({
             title: "Oh no!!",
-            text: "It seems that your credentials are wrong!",
+            text: t('login.wrong_credentials'),
             imageUrl: "src/assets/images/hacker_pidgeon.jpg",
             imageWidth: 300,
             imageHeight: 300,
-            imageAlt: "Wrong credentials",
-            confirmButtonText: "Let's check it out!",
+            imageAlt: t('login.image_alt'),
+            confirmButtonText: t('login.confirm_btn'),
         });
 }
 </script>
@@ -34,12 +36,12 @@ async function login() {
             </div>
             <div class="form-container">
                 <div class="header">
-                    <h1>BirdBuster &copy;</h1>
+                    <h1>{{ Config.APP_NAME }} &copy;</h1>
                 </div>
                 <div class="form">
                     <input v-model="username" type="text" placeholder="Username" @keyup.enter="login" />
                     <input v-model="password" type="password" placeholder="Password" @keyup.enter="login" />
-                    <button @click="login">Login</button>
+                    <button @click="login">{{ t('login.login_btn') }}</button>
                 </div>
             </div>
         </div>
@@ -108,4 +110,4 @@ async function login() {
         }
     }
 }
-</style>
+</style>@/stores/user

@@ -1,16 +1,30 @@
 <script setup lang="ts">
+import router from '@/router';
+
+
+const props = defineProps({
+    id: {
+        type: String,
+        required: true
+    },
+    name: {
+        type: String,
+        required: true
+    }
+});
+
 function openDetectorPage() {
-    window.open('/system/detectors/1', '_blank');
+    router.push({ path: 'system/detectors/' + props.id });
 }
 </script>
 
 <template>
-    <div class="detector-card" id="" @click="openDetectorPage">
+    <div class="detector-card" :id="props.id" @click="openDetectorPage">
         <div class="header">
             <font-awesome-icon :icon="['fas', 'camera']" />
         </div>
         <div class="data">
-            <p>Detector #1</p>
+            <p>{{ props.name }}</p>
         </div>
     </div>
 </template>

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+// @ts-ignore
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 </script>
 
 <template>
@@ -6,8 +9,8 @@
         <div class="container">
             <div class="content">
                 <h1>OH NO! </h1>
-                <h2>It seems that some birds sabotaged this page</h2>
-                <h3>Or maybe you just mistyped...</h3>
+                <h2>{{ t('no_page.message') }}</h2>
+                <h3>{{ t('no_page.submessage') }}</h3>
             </div>
         </div>
     </main>

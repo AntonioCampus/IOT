@@ -1,4 +1,4 @@
-import Config from "@/config/config";
+import Config from "@/config";
 import { getToken } from "../js/token";
 
 function isHTPPMethod(method: string) {
@@ -11,7 +11,7 @@ export default async function doRequest(path: string, method: string, body: any)
     const headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + getToken(), // auth token
-        "ngrok-skip-browser-warning": "69420", // ngrok header to skip browser warning
+        "ngrok-skip-browser-warning": "69520", // ngrok header to skip browser warning
     };
 
     const options = {

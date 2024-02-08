@@ -2,72 +2,71 @@ import Swal from 'sweetalert2';
 import sendOTP from './sendOTP';
 import addDevice from '../api/addDevice';
 import getZones from '../api/getZones';
+import router from '@/router';
+import config from '@/config';
 
-const modal_title = 'Set a new detector';
+// @ts-ignore
+import i18n from '@/config/i18n'
+const { t } = i18n.global
+
 const detector_str = 'detector';
 
-function getIdName(detector: { idname: string; passcode: string; zone: string; otp: number; }) {
+function getIdName(detector: { idname: string; passcode: string; zone: string }) {
     return Swal.fire({
-        title: modal_title,
-        text: 'Please enter the id of the detector',
+        title: t('forms.new_detector'),
+        text: t('forms.request_id'),
         input: 'text',
         showCancelButton: true,
-        confirmButtonText: 'Next &rarr;',
+        confirmButtonText: t('common.next_btn'),
         showLoaderOnConfirm: true,
-        cancelButtonText: 'Cancel',
+        cancelButtonText: t('common.cancel'),
         progressSteps: ['1', '2', '3'],
         currentProgressStep: 0,
         inputValidator: (value) => {
-            if (!value || value.match(/[\s\W]/)) return 'Invalid id, please check your input and try again.'
+            if (!value || value.match(/[\s\W]/)) return t('forms.invalid_id');
             else detector.idname = value;
         },
     })
 }
 
-function getPasscode(detector: { idname: string; passcode: string; zone: string; otp: number; }) {
+function getPasscode(detector: { idname: string; passcode: string; zone: string }) {
     return Swal.fire({
-        title: modal_title,
-        text: 'Please enter the passcode of the detector',
+        title: t('forms.new_detector'),
+        text: t('forms.request_passcode'),
         input: 'text',
         showCancelButton: true,
-        confirmButtonText: 'Next &rarr;',
+        confirmButtonText: t('common.next_btn'),
         showLoaderOnConfirm: true,
-        cancelButtonText: 'Cancel',
+        cancelButtonText: t('common.cancel'),
         progressSteps: ['1', '2', '3'],
         currentProgressStep: 1,
         inputValidator: (value) => {
-            if (!value || value.match(/[\s\W]/)) return 'Invalid passcode, please check your input and try again.'
+            if (!value || value.match(/[\s\W]/)) return t('forms.invalid_passcode');
             else detector.passcode = value;
         }
     })
 }
 
-async function getZone(detector: { idname: string; passcode: string; zone: string; otp: number; }) {
-    //const zones = await getZones();
-    /* return Swal.fire({
-        title: modal_title,
+async function getZone(detector: { idname: string; passcode: string; zone: string }) {
+    const zones = await getZones();
+    console.log(zones);
+    return Swal.fire({
+        title: t('forms.new_detector'),
         html: `
             <select id="swal-input1" class="swal2-input">
                 ${zones.map((zone: any) => {
-            return `<option value="${zone.id}">${zone.info}</option>`
+            return `<option value="${zone[0]}">${zone[1]}</option>`
         })}
             </select>
         `,
-    }) */
-    return Swal.fire({
-        title: modal_title,
-        text: 'Please select the zone of the detector',
-        input: 'select',
-        inputOptions: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
         showCancelButton: true,
-        confirmButtonText: 'Next &rarr;',
+        confirmButtonText: t('common.next_btn'),
         showLoaderOnConfirm: true,
-        cancelButtonText: 'Cancel',
+        cancelButtonText: t('common.cancel'),
         progressSteps: ['1', '2', '3'],
         currentProgressStep: 2,
-        inputValidator: (value) => {
-            if (!value) return 'Invalid zone, please check your input and try again.'
-            else detector.zone = value;
+        preConfirm: () => {
+            detector.zone = (document.getElementById('swal-input1') as HTMLInputElement).value;
         }
     })
 }
@@ -76,35 +75,34 @@ export default function openAddActuatorModal() {
     let new_detector = {
         idname: '',
         passcode: '',
-        zone: '',
-        otp: 0
+        zone: ''
     };
     getIdName(new_detector).then((result) => {
         if (result.isConfirmed) getPasscode(new_detector).then((result) => {
             if (result.isConfirmed) getZone(new_detector).then(async (result) => {
                 if (result.isConfirmed) {
-                    const mfa = await sendOTP('134723339')
+                    const mfa = await sendOTP(config.TELEGRAM_ADMIN_CHAT_ID)
                     if (mfa) {
                         const result = await addDevice(new_detector.idname, new_detector.passcode, new_detector.zone, detector_str);
                         if (result) Swal.fire({
-                            title: 'Success!',
-                            text: 'The detector has been added successfully!',
+                            title: t('common.success'),
+                            text: t('forms.detector_added'),
                             icon: 'success',
-                            confirmButtonText: 'Cool!'
+                            confirmButtonText: t('common.ok')
                         }).then(() => {
-                            location.reload();
+                            router.go(0);
                         });
                         else Swal.fire({
-                            title: 'Error!',
-                            text: 'An error occured while adding the detector, please try again later.',
+                            title: t('common.error'),
+                            text: t('forms.detector_error'),
                             icon: 'error',
-                            confirmButtonText: 'Ok'
+                            confirmButtonText: t('common.ok')
                         });
                     } else Swal.fire({
-                        title: 'Error!',
-                        text: 'The OTP code is wrong, please try again later.',
+                        title: t('common.error'),
+                        text: t('common.wrong_otp'),
                         icon: 'error',
-                        confirmButtonText: 'Ok'
+                        confirmButtonText: t('common.ok')
                     });
                 }
             });

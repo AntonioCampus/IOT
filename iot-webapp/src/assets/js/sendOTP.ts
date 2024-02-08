@@ -1,18 +1,20 @@
 import Swal from 'sweetalert2';
 import OTP from '../api/models/OTP';
+import config from '@/config';
 
-const time = 1000 * 60 * 3;
+import i18n from '@/config/i18n'
+const { t } = i18n.global
 
 async function sendToUser(user_id: string, otp: number | string) {
     const message = `
-    🕜 <b>OTP code</b>
+    🕜 <b>${t('otp.otp_code')}</b>
 
-    Your OTP code is:
+    ${t('otp.your_otp')}
     <code>${otp}</code>
 
-    <b>Note</b>: it will expires in 3 minutes.
+    <b>${t('otp.note')}</b>: ${t('otp.expires')} 3 ${t('otp.minutes')}.
     `;
-    const url = 'https://api.telegram.org/bot6710606204:AAF7zQglSskTxsq3ItcAdPZSZhNM2R260ys/sendMessage';
+    const url = 'https://api.telegram.org/bot' + config.TELEGRAM_BOT_TOKEN + '/sendMessage';
     const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -30,7 +32,7 @@ function showErrorMessage() {
     Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: 'Something went wrong!'
+        text: t('otp.otp_error')
     });
 }
 
@@ -42,16 +44,14 @@ export default async function sendOTP(user_id: string,) {
     if (response == null) showErrorMessage();
     else {
         const swal = await Swal.fire({
-            title: 'Set a new detector',
-            text: 'Please enter the OTP sent to your phone',
+            title: t('otp.otp_title'),
+            text: t('otp.otp_text'),
             input: 'text',
             showCancelButton: true,
-            confirmButtonText: 'Next &rarr;',
+            confirmButtonText: t('common.confirm'),
             showLoaderOnConfirm: true,
-            cancelButtonText: 'Cancel',
-            progressSteps: ['1', '2', '3'],
-            currentProgressStep: 3,
-            timer: time,
+            cancelButtonText: t('common.cancel'),
+            timer: config.MAX_TIME_OTP,
             timerProgressBar: true,
             toast: true
         });

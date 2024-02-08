@@ -4,8 +4,10 @@ export default async function addUser(username: string, password: string, privil
     const body = {
         user: username,
         password: password,
-        privileged: privileged
+        isAdmin: privileged
     };
+
+    console.log(body);
 
     const response = await doRequest('/users/register', 'POST', body);
 

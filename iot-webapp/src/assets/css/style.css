@@ -8,9 +8,6 @@
 }
 
 body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     color: var(--black);
     min-height: 100vh;
     background-color: var(--background-color);

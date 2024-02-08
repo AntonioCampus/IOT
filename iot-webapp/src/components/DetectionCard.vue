@@ -1,23 +1,42 @@
 <script setup lang="ts">
-import router from '@/router';
+import Swal from 'sweetalert2';
+
+// @ts-ignore
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const props = defineProps({
     id: {
         type: String,
         required: true
     },
-    name: {
+    device: {
         type: String,
         required: true
     },
-    time: {
+    date: {
         type: String,
         required: true
     },
+    zone: {
+        type: String,
+        required: true
+    }
 });
 
 function openAlertOverview() {
-    router.push({ path: '/alerts/' + props.id });
+    Swal.fire({
+        title: t('alert_card.title'),
+        icon: 'info',
+        html: `
+            <p><strong>ID:</strong> ${props.id}</p>
+            <p><strong>${t('common.date')}:</strong> ${props.date}</p>
+            <p><strong>Detector:</strong> ${props.device}</p>
+            <p><strong>${t('common.zone')}:</strong> ${props.zone}</p>
+        `,
+        showConfirmButton: true,
+        confirmButtonText: t('common.close')
+    });
 }
 </script>
 
@@ -27,9 +46,8 @@ function openAlertOverview() {
             <font-awesome-icon :icon="['fas', 'camera']" />
         </div>
         <div class="content">
-            <p>[{{ props.time }}] Image
-                acquired
-                by Detector "{{ props.name }}"</p>
+            <p>[{{ props.date }}] {{ t('alert_card.image_acquired') }}
+                @ Detector "{{ props.device }}"</p>
         </div>
     </div>
 </template>

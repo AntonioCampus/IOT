@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import Swal from 'sweetalert2';
+// @ts-ignore
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+
 const props = defineProps({
     id: String,
     description: String
 });
 
-function openDescriptionModal() {
+function openZoneModal() {
     Swal.fire({
-        title: 'Zone description',
+        title: t('system.zone_description'),
         text: props.description,
         icon: 'info',
         confirmButtonText: 'OK'
@@ -16,7 +20,7 @@ function openDescriptionModal() {
 </script>
 
 <template>
-    <div class="zone-card" id="" @click="openDescriptionModal">
+    <div class="zone-card" id="" @click="openZoneModal">
         <div class="header">
             <font-awesome-icon :icon="['fas', 'location-dot']" />
         </div>

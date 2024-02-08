@@ -5,36 +5,95 @@ import SectionTitle from "@/components/SectionTitle.vue";
 import DataCard from "@/components/DataCard.vue";
 import Loader from '@/components/Loader.vue';
 import NoResultCard from "@/components/NoResultCard.vue";
-
+import Swal from "sweetalert2";
 import { ref } from "vue";
 import { onMounted } from "vue";
 import getDashboard from "@/assets/api/getDashboard";
+import getZones from "@/assets/api/getZones";
+import Config from "@/config";
+import getOverrides from "@/assets/api/getOverrides";
+import router from "@/router";
+
+// @ts-ignore
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const loading = ref(true);
 const detections_list = ref([]);
 const alerts_list = ref([]);
 const active_detectors = ref(0);
 const detections_today = ref(0);
+const zones = ref([]);
+const faults = ref(0);
+const overrides = ref([]);
 
 function countUnique(iterable: any) {
   return new Set(iterable).size;
 }
 
+function getFaulty(iterable: any) {
+  /**
+   * A device is faulty when it has not sent a detection in the last hour
+   */
+  return iterable.filter((detection: any) => {
+    const lastDetection = new Date(detection[4]);
+    const now = new Date();
+    return (now.getTime() - lastDetection.getTime()) > Config.MAX_TIME_BEFORE_FAULT;
+  });
+}
+
 function getDetectionsDay(iterable: any) {
-  return iterable.filter((detection: any) => detection[3].split(" ")[0] == new Date().toISOString().split("T")[0]);
+  return iterable.filter((detection: any) => detection[4].split(" ")[0] == new Date().toISOString().split("T")[0]);
 }
 
 onMounted(async () => {
   const response = await getDashboard();
   if (response != null) {
     detections_list.value = response;
-    alerts_list.value = detections_list.value.filter((detection) => detection[2] == 1);
+    alerts_list.value = detections_list.value.filter((detection) => detection[3] == 1);
     active_detectors.value = countUnique(detections_list.value.map((detection) => detection[1]));
     detections_today.value = getDetectionsDay(detections_list.value).length;
-    loading.value = false;
+    faults.value = countUnique(getFaulty(detections_list.value));
+
+    const responseZones = await getZones();
+    if (responseZones != null) {
+      zones.value = responseZones;
+
+      const responseOverrides = await getOverrides();
+      if (responseOverrides != null) {
+        overrides.value = responseOverrides;
+        loading.value = false;
+      }
+    }
+  }
+
+  if (loading.value) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: t('errors.fetch_data'),
+    }).then(() => {
+      router.push({ path: '/' });
+    });
   }
 
 });
+
+function openFaultsPage() {
+  router.push({ name: 'faults' });
+}
+
+function openOverridesPage() {
+  router.push({ name: 'overrides' });
+}
+
+function openSystemPage() {
+  router.push({ name: 'system' });
+}
+
+function openAlertsPage() {
+  router.push({ name: 'alerts' });
+}
 </script>
 
 <template>
@@ -42,28 +101,33 @@ onMounted(async () => {
   <main v-else>
     <div class="container">
       <section id="overview">
-        <SectionTitle title="Overview" />
+        <SectionTitle :title="t('dashboard.overview')" />
         <div class="cards-list">
-          <DataCard :icon="['fas', 'triangle-exclamation']" :number=0 label="Unchecked alerts" />
-          <DataCard :icon="['fa', 'clock']" :number=detections_today label="Detections/24h" />
-          <DataCard :icon="['fas', 'crow']" :number=0 label="Manual overrides today" />
-          <DataCard :icon="['fas', 'camera']" :number=active_detectors label="Active detectors" />
-          <DataCard :icon="['fa', 'bug']" :number=0 label="Fault detected" />
+          <DataCard :icon="['fas', 'location-dot']" :number=zones.length :label="t('dashboard.active_zones')"
+            @click="openSystemPage" />
+          <DataCard :icon="['fa', 'clock']" :number=detections_today :label="t('dashboard.detections_day')"
+            @click="openAlertsPage" />
+          <DataCard :icon="['fas', 'crow']" :number=overrides.length :label="t('dashboard.manual_overrides')"
+            @click="openOverridesPage()" />
+          <DataCard :icon="['fas', 'camera']" :number=active_detectors :label="t('dashboard.active_detectors')"
+            @click="openSystemPage" />
+          <DataCard :icon="['fa', 'bug']" :number=faults :label="t('dashboard.possible_faults')"
+            @click="openFaultsPage()" />
         </div>
       </section>
       <section id="alerts-history">
-        <SectionTitle title="Alerts history" />
-        <NoResultCard v-if="alerts_list.length == 0" label="No alerts found" />
+        <SectionTitle :title="t('dashboard.alerts_history')" />
+        <NoResultCard v-if="alerts_list.length == 0" :label="t('dashboard.no_alerts')" />
         <div class="alerts-list" v-else>
-          <AlertCard v-for="alert in alerts_list" :id="alert[0]" :time="alert[3]" :name="alert[1]" />
+          <AlertCard v-for="alert in alerts_list" :id="alert[0]" :date="alert[4]" :device="alert[2]" :zone="alert[3]" />
         </div>
       </section>
       <section id="detections-history">
-        <SectionTitle title="Last detections" />
-        <NoResultCard v-if="detections_list.length == 0" label="No detections found" />
+        <SectionTitle :title="t('dashboard.last_detections')" />
+        <NoResultCard v-if="detections_list.length == 0" :label="t('dashboard.no_detections')" />
         <div class="alerts-list" v-else>
-          <DetectionCard v-for="detection in detections_list" :id="detection[0]" :time="detection[3]"
-            :name="detection[1]" />
+          <DetectionCard v-for="detection in detections_list" :id="detection[0]" :date="detection[4]"
+            :device="detection[2]" :zone="detection[3]" />
         </div>
       </section>
     </div>
