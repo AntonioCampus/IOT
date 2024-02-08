@@ -87,7 +87,7 @@ def register():
             conn = db.OpenConnection()
             cursor = conn.cursor()
             query = "INSERT INTO users (user, pass,isAdmin) VALUES (?, ?, ?)"
-            cursor.execute(query, (user, password_hash, bool(isAdmin)))
+            cursor.execute(query, (user, password_hash, isAdmin))
             conn.commit()
             return jsonify({"status":True})
         except:

@@ -66,6 +66,10 @@ INSERT INTO users (user, pass,isAdmin) VALUES ('admin',
                     '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
                     true);
 
+INSERT INTO users (user, pass,isAdmin) VALUES ('user', 
+                    '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
+                    false); 
+
 
 INSERT INTO ovverides ( userId,zone,time) VALUES (1, 1,'2024-01-29 11:06:01');
 INSERT INTO ovverides ( userId,zone,time) VALUES (1, 1,'2024-04-29 11:06:01');
