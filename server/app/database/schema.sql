@@ -62,8 +62,10 @@ CREATE TABLE zones(
 );
 
 
-INSERT INTO users (user, pass,isAdmin) VALUES ('admin', 'password',true);
-INSERT INTO users (user, pass,isAdmin) VALUES ('anto', '123',false);
+INSERT INTO users (user, pass,isAdmin) VALUES ('admin', 
+                    '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
+                    true);
+
 
 INSERT INTO ovverides ( userId,zone,time) VALUES (1, 1,'2024-01-29 11:06:01');
 INSERT INTO ovverides ( userId,zone,time) VALUES (1, 1,'2024-04-29 11:06:01');
@@ -76,9 +78,15 @@ INSERT INTO zones (info) VALUES ("Vicino torre di controllo");
 INSERT INTO zones (info) VALUES ("Dio ti guarda!!");
 INSERT INTO zones (info) VALUES ("Vicino a nitti");
 
-INSERT INTO devices (idname,passcode,zone) VALUES ('actuator1',"123","1");
-INSERT INTO devices (idname,passcode,zone) VALUES ('actuator2',"123","2");
-INSERT INTO devices (idname,passcode,zone) VALUES ('detector1',"123","1");
+INSERT INTO devices (idname,passcode,zone) VALUES ('actuator1',
+                                                    "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+                                                    "1");
+INSERT INTO devices (idname,passcode,zone) VALUES ('actuator2',
+                                                    "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+                                                    "2");
+INSERT INTO devices (idname,passcode,zone) VALUES ('detector1',
+                                                    "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+                                                    "1");
 
 
 INSERT INTO actuators (id) VALUES (1);

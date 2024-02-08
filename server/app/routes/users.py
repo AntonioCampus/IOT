@@ -14,9 +14,9 @@ from MQTT.mqtt import *
 
 from flask import jsonify
 
+from app.utils.hash import *
 
 API_NAME ="/api/users"
-
 
 
 
@@ -36,16 +36,18 @@ def login():
                             "status":False})
 
 
+        password_hash = hash.hash_256(password)
+        print(password_hash)
         cursor = db.OpenConnection().cursor()
 
         query = "SELECT * FROM users WHERE user=? AND pass=?"
-        user=list(cursor.execute(query, (user, password)).fetchone())
+        user=cursor.execute(query, (user, password_hash)).fetchone()
         
-
         if user==None:
             return jsonify({"error": "Wrong credentials",
                             "status":False})
         
+        user = list(user)
 
         additional_claims = {"isAdmin": user[3],
                              "userId":user[0]}
@@ -79,11 +81,13 @@ def register():
             return jsonify({"error":"Invalid paramters",
                             "status":False})
 
+        password_hash = hash.hash_256(password)
+
         try:
             conn = db.OpenConnection()
             cursor = conn.cursor()
             query = "INSERT INTO users (user, pass,isAdmin) VALUES (?, ?, ?)"
-            cursor.execute(query, (user, password, isAdmin))
+            cursor.execute(query, (user, password_hash, bool(isAdmin)))
             conn.commit()
             return jsonify({"status":True})
         except:
@@ -141,7 +145,7 @@ def removeUser():
 
 
 @app.route(API_NAME+"/listoverrides",methods=['GET'])
-@jwt_required()
+#@jwt_required()
 def ListOvverride():
     try:
         cursor = db.OpenConnection().cursor()
@@ -164,6 +168,7 @@ def boom():
     
     if request.method == 'POST':
         zone = request.json.get("zone", None)
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         userid = get_jwt()["userId"]
         isAdmin = get_jwt()["isAdmin"]
@@ -179,7 +184,7 @@ def boom():
         try:
             MQTT.publish(app.config["BROKER_ADDR"],
                     app.config["BROKER_PORT"],
-                    zone,
+                    "zone"+str(zone),
                     "1")
         except:
             return jsonify({"error":"Mqtt Error",
@@ -190,8 +195,8 @@ def boom():
             conn = db.OpenConnection()
             cursor = conn.cursor()
 
-            query = "INSERT INTO ovverides (userId, zone) VALUES (?, ?)"
-            cursor.execute(query, (userid,zone))
+            query = "INSERT INTO ovverides (userId, zone,time) VALUES (?, ?, ?)"
+            cursor.execute(query, (userid,zone,current_time))
             conn.commit()
             return jsonify({"status":True})
         except:

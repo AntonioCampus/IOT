@@ -6,6 +6,7 @@ from datetime import datetime
 
 from flask import jsonify
 from MQTT.mqtt import *
+from app.utils.hash import *
 
 from flask_jwt_extended import create_access_token,\
                                 get_jwt,\
@@ -29,12 +30,15 @@ def loginDevice():
         if(user == None or 
            password == None):
             return jsonify({"error":"Invalid paramters"})
+        
+
+        password_hash = hash.hash_256(password)
 
         cursor = db.OpenConnection().cursor()
 
         query = "SELECT * FROM devices WHERE idname=? AND passcode=?"
 
-        device=cursor.execute(query, (user, password)).fetchone()
+        device=cursor.execute(query, (user, password_hash)).fetchone()
 
 
         if device==None:
@@ -56,10 +60,15 @@ def loginDevice():
 
 
 @app.route(API_NAME+"/remove",methods=['GET', 'POST'])
+@jwt_required()
 def RemoveDevice():
     if request.method == 'GET':
         return jsonify({"msg": "Send post request"})
     if request.method == 'POST':
+        isAdmin = get_jwt()["isAdmin"]
+        if(isAdmin != True):
+           return jsonify({"error":"Invalid privilages",
+                           "status":False})
         deviceId = request.json.get("deviceId", None)
         deviceType = request.json.get("type", None)
 
@@ -76,7 +85,7 @@ def RemoveDevice():
         if(deviceType == "actuator"):
             query1 = "DELETE FROM actuators WHERE id=?"
         elif(deviceType == "detector"):
-            query1 = "DELETE FROM detector WHERE id=?"
+            query1 = "DELETE FROM detectors WHERE id=?"
         else:
             return jsonify({"error":"Invalid device type",
                             "status":False})
@@ -124,11 +133,16 @@ def GetActuators():
     
 
 @app.route(API_NAME+"/add",methods=['GET', 'POST'])
+@jwt_required()
 def addDevice():
     if request.method == 'GET':
         return jsonify({"msg": "Send post request"})
     
     if request.method == 'POST':
+        isAdmin = get_jwt()["isAdmin"]
+        if(isAdmin != True):
+           return jsonify({"error":"Invalid privilages",
+                           "status":False})
         print("request",request.json)
         idname = request.json.get("idname", None)
         passcode = request.json.get("passcode", None)
@@ -143,6 +157,8 @@ def addDevice():
             return jsonify({"error":"Invalid paramters",
                             "status":False})
 
+
+        password_hash = hash.hash_256(passcode)
         conn = db.OpenConnection()
         cursor = conn.cursor()
         
@@ -159,7 +175,7 @@ def addDevice():
 
         status = True
         try:
-            cursor.execute(query, (idname, passcode,zone))
+            cursor.execute(query, (idname, password_hash,zone))
             newInsertedId = cursor.lastrowid
             
         except:
@@ -185,7 +201,7 @@ def classifyImage():
                         "status":False})
     if request.method == 'POST':
         if("file" in request.files):
-            time = datetime.now()
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             image=request.files["file"]
             status = detector.DetectBird(image)
             # Extract the zone from the jwt of the device
@@ -205,7 +221,7 @@ def classifyImage():
 
             query = "INSERT INTO alerts (zoneId, deviceId,  status, time) VALUES (?,?, ?, ?)"
 
-            cursor.execute(query, (zoneId, DeviceId ,status, time))
+            cursor.execute(query, (zoneId, DeviceId ,status, current_time))
             conn.commit()        
 
             return jsonify({"status":True,

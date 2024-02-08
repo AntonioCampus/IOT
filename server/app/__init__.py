@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-
+from datetime import timedelta
 from config import Configuration
 from flask_jwt_extended import  JWTManager
 from app.database.db import Database
@@ -13,6 +13,7 @@ CORS(app)
 app.config.from_object(config)
 
 app.secret_key = app.config["SESSION_KEY"]
+app.config['JWT_EXPIRATION_DELTA'] = timedelta(days=1)
 
 
 jwt_manager = JWTManager(app)
