@@ -24,7 +24,7 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const zones = ref([]);
-const is_admin = useUserStore().isAdmin;
+const is_admin = ref(useUserStore().isAdmin);
 const detectors = ref([]);
 const actuators = ref([]);
 const loading = ref(true);

@@ -5,6 +5,7 @@ import config from '@/config';
 
 // @ts-ignore
 import i18n from '@/config/i18n'
+import router from '@/router';
 const { t } = i18n.global
 
 function getUsername(new_user: { username: string; password: string; privileged: string; }) {
@@ -79,11 +80,13 @@ export default function openAddUserModal() {
                             const mfa = await sendOTP(config.TELEGRAM_ADMIN_CHAT_ID);
                             if (mfa) {
                                 const res = await addUser(new_user.username, new_user.password, Boolean(new_user.privileged));
-                                if (res) Swal.fire({
-                                    icon: 'success',
-                                    title: t('users.added_user_title'),
-                                    text: t('users.added_user_txt'),
-                                });
+                                if (res) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: t('users.added_user_title'),
+                                        text: t('users.added_user_txt'),
+                                    }).then(() => router.go(0));
+                                }
                                 else Swal.fire({
                                     icon: 'error',
                                     title: t('common.error'),
