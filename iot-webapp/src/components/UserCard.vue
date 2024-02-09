@@ -16,7 +16,7 @@ const props = defineProps<{
 
 <template>
     <div class="user-card notallowed" v-tooltip="t('users.no_remove')"
-        v-if="useUserStore().userId === props.id && useUserStore().isAdmin">
+        v-if="useUserStore().userId == props.id && useUserStore().isAdmin">
         <div class="icon">
             <font-awesome-icon :icon="['fas', 'user']" />
         </div>
@@ -26,7 +26,7 @@ const props = defineProps<{
         </div>
     </div>
     <div class="user-card allowed" @click="openDeleteUserModal(props.id)" v-tooltip="t('users.remove_tooltip')"
-        v-if="useUserStore().userId !== props.id && useUserStore().isAdmin">
+        v-if="useUserStore().userId != props.id && useUserStore().isAdmin">
         <div class="icon">
             <font-awesome-icon :icon="['fas', 'user']" />
         </div>

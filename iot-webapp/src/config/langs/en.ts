@@ -135,11 +135,13 @@ export default {
     faults: {
         no_report: 'has not reported any data for the last 24 hours.',
         title: 'Possible faults overview',
+        no_faults: 'No faults found',
     },
     overrides: {
         override_lbl: 'Override in Zone',
         issued_by: 'Issued by',
         title: 'Overrides',
+        no_overrides: 'No overrides found',
         override_actuator: 'Are you sure you want to override this actuator?',
         override_title: 'Actuator overrided!',
         override_txt: 'The actuator has been overrided successfully!',

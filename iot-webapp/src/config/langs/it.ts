@@ -135,11 +135,13 @@ export default {
     faults: {
         no_report: 'non ha segnalato alcun dato per le ultime 24 ore.',
         title: 'Panoramica possibili guasti',
+        no_faults: 'Nessun guasto trovato',
     },
     overrides: {
         override_lbl: 'Override in Zona',
         issued_by: 'Emitente',
         title: 'Override',
+        no_overrides: 'Nessun override trovato',
         override_actuator: 'Sei sicuro di voler eseguire l\'override di questo attuatore?',
         override_title: 'Attuatore sovrascritto!',
         override_txt: 'L\'attuatore è stato sovrascritto con successo!',

@@ -7,6 +7,7 @@ import Loader from "@/components/Loader.vue";
 import Config from "@/config";
 import Swal from "sweetalert2";
 import router from "@/router";
+import NoResultCard from "@/components/NoResultCard.vue";
 
 // @ts-ignore
 import { useI18n } from 'vue-i18n';
@@ -35,6 +36,7 @@ onMounted(async () => {
     if (response != null) {
         faulty_devices.value = getUniqueDevices(getFaulty(response));
         loading.value = false;
+        console.log(faulty_devices.value.length);
     }
 
     if (loading.value) {
@@ -56,7 +58,9 @@ onMounted(async () => {
             <SectionTitle :title="t('faults.title')" />
         </section>
         <section id="faults">
-            <div class="faults-list">
+            <NoResultCard :label="t('faults.no_faults')"
+                v-if="faulty_devices.length == undefined || faulty_devices.length == 0" />
+            <div class="faults-list" v-else>
                 <FaultCard v-for="faulty in faulty_devices" :id="faulty" />
             </div>
         </section>

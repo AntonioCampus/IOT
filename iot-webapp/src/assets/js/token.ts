@@ -9,4 +9,5 @@ export function getToken() {
 export function removeToken() {
     localStorage.removeItem('is_admin')
     localStorage.removeItem('user_token')
+    localStorage.removeItem('user_id')
 }

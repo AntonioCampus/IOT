@@ -7,6 +7,7 @@ import { ref, onMounted } from "vue";
 import Loader from "@/components/Loader.vue";
 import Swal from "sweetalert2";
 import router from "@/router";
+import NoResultCard from "@/components/NoResultCard.vue";
 
 const loading = ref(true);
 const overrides = ref([]);
@@ -68,7 +69,8 @@ onMounted(async () => {
             <SectionTitle :title="t('overrides.title')" />
         </section>
         <section id="overrides">
-            <div class="overrides-list">
+            <NoResultCard :label="t('overrides.no_overrides')" v-if="overrides.length == 0" />
+            <div class="overrides-list" v-else>
                 <OverrideCard v-for="override in overrides" :id="override[0]" :date="override[3]" :user="override[1]"
                     :zone="override[2]" />
             </div>
@@ -88,7 +90,7 @@ main {
     overflow-y: scroll;
     min-height: 50vh;
     padding: 3rem;
-    min-height: 80vh;
-    width: 90vw;
+    min-height: 70vh;
+    width: 70vw;
 }
 </style>

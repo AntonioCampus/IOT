@@ -17,6 +17,7 @@ export default async function doLogin(username: string, password: string) {
         let payload = JSON.parse(atob(token_parts[1]));
         let userStore = useUserStore();
         userStore.setAdmin(payload.isAdmin);
+        console.log(payload.userId);
         userStore.setUserId(payload.userId);
         return true;
     }
