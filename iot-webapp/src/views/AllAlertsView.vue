@@ -51,7 +51,7 @@ watch(only_checked, async (value) => {
     <main v-else>
         <section>
             <SectionTitle :title="t('all_alerts.title')" />
-            <div class="filters" v-if="detections_list.length > 0">
+            <div class="filters">
                 <input v-model="only_checked" type="checkbox" id="status" value="status" />
                 <label for="status">{{ t('all_alerts.filter_lbl') }}</label>
             </div>
