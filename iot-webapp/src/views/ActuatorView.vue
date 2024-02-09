@@ -36,6 +36,7 @@ onMounted(async () => {
         const zones = await getZones();
         if (zones) {
             zone.value = getZoneById(zones, actuator.value[3]);
+            console.log(zone.value);
             loading.value = false;
         }
     }
@@ -59,7 +60,7 @@ onMounted(async () => {
         <section id="header">
             <SectionTitle :title="actuator[1]" />
             <div class="tools" v-if="useUserStore().isAdmin">
-                <button class="danger" @click="overrideActuator(router.currentRoute.value.params.id as string)">
+                <button class="danger" @click="overrideActuator(zone[0])">
                     <font-awesome-icon :icon="['fas', 'crosshairs']" /> {{ t('system.override') }}
                 </button>
                 <button class="danger" @click="openDeleteActuatorModal(router.currentRoute.value.params.id as string)">
