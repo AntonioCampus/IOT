@@ -79,8 +79,6 @@ INSERT INTO ovverides ( userId,zone,time) VALUES (1, 1,'2024-01-39 11:06:01');
 INSERT INTO zones (info) VALUES ("Inzio pista");
 INSERT INTO zones (info) VALUES ("Fine pista");
 INSERT INTO zones (info) VALUES ("Vicino torre di controllo");
-INSERT INTO zones (info) VALUES ("Dio ti guarda!!");
-INSERT INTO zones (info) VALUES ("Vicino a nitti");
 
 INSERT INTO devices (idname,passcode,zone) VALUES ('actuator1',
                                                     "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
