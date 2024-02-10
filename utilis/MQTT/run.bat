@@ -1,1 +1,0 @@
-C:\Users\anton\AppData\Local\Programs\Python\Python311\python.exe client_pub.py
