@@ -203,12 +203,19 @@ def classifyImage():
         if("file" in request.files):
             current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             image=request.files["file"]
-            status = detector.DetectBird(image)
+            status =  detector.DetectBird(image)
             # Extract the zone from the jwt of the device
             # and use it as topic for MQTT 
             zoneId = get_jwt()["zone"]
             DeviceId = get_jwt()["DeviceId"]
-            if(status):
+
+            query = "SELECT * FROM devices WHERE id IN (SELECT id FROM actuators) AND zone = ?"
+            conn = db.OpenConnection()
+            cursor = conn.cursor()
+
+            data=cursor.execute(query, (zoneId,)).fetchall()
+
+            if(status and len(data)>0):
                 pass
                 MQTT.publish(app.config["BROKER_ADDR"],
                     app.config["BROKER_PORT"],

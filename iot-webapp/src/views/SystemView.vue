@@ -61,7 +61,7 @@ onMounted(async () => {
             <NoResultCard v-if="detectors.length == 0" :label="t('system.no_detectors')" />
             <div class="components-list">
                 <DetectorCard v-for="detector in detectors" :id="detector[0]" :name="detector[1]" />
-                <EmptyDetectorCard @click="openAddDetectorModal" v-if="is_admin" :enabled="zones.length > 0" />
+                <EmptyDetectorCard v-if="is_admin" :enabled="zones.length > 0" />
             </div>
         </section>
         <section id="actuators">
@@ -69,7 +69,7 @@ onMounted(async () => {
             <NoResultCard v-if="actuators.length == 0" :label="t('system.no_actuators')" />
             <div class="components-list">
                 <ActuatorCard v-for="actuator in actuators" :id="actuator[0]" :name="actuator[1]" />
-                <EmptyActuatorCard @click="openAddActuatorModal" v-if="is_admin" :enabled="zones.length > 0" />
+                <EmptyActuatorCard v-if="is_admin" :enabled="zones.length > 0" />
             </div>
         </section>
         <section id="actuators">
@@ -77,7 +77,7 @@ onMounted(async () => {
             <NoResultCard v-if="zones.length == 0" :label="t('system.no_zones')" />
             <div class="components-list">
                 <ZoneCard v-for="zone in zones" :id="zone[0]" :description="zone[1]" />
-                <EmptyZoneCard @click="openAddZoneModal" v-if="is_admin" />
+                <EmptyZoneCard v-if="is_admin" />
             </div>
         </section>
     </main>

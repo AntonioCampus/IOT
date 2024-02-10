@@ -20,7 +20,7 @@ function openZoneModal() {
 </script>
 
 <template>
-    <div class="zone-card" id="" @click="openZoneModal">
+    <div class="zone-card" :id="props.id" @click="openZoneModal">
         <div class="header">
             <font-awesome-icon :icon="['fas', 'location-dot']" />
         </div>

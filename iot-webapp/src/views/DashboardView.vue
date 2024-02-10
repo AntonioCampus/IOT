@@ -55,7 +55,7 @@ function getFaulty(iterable: any) {
     const now = new Date();
     return (now.getTime() - lastDetection.getTime()) > Config.MAX_TIME_BEFORE_FAULT;
   });
-
+  console.log(faulty_devices);
   return faulty_devices;
 
 }
@@ -72,6 +72,7 @@ onMounted(async () => {
   const response = await getDashboard();
   if (response != null) {
     detections_list.value = response;
+    console.log(detections_list.value);
     alerts_list.value = detections_list.value.filter((detection) => detection[3] == 1);
     active_detectors.value = countUnique(detections_list.value.map((detection) => detection[1]));
     detections_today.value = getDetectionsDay(detections_list.value).length;

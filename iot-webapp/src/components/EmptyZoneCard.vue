@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { vTooltip } from 'floating-vue'
+import openAddZoneModal from '@/assets/js/openAddZoneModal';
 // @ts-ignore
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
@@ -7,7 +8,7 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <div class="empty-zone-card" id="" v-tooltip="t('system.add_zone')">
+    <div class="empty-zone-card" @click="openAddZoneModal" v-tooltip="t('system.add_zone')">
         <div class="content">
             <font-awesome-icon :icon="['fas', 'plus']" />
         </div>

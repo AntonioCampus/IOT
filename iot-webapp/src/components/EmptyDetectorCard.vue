@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { vTooltip } from 'floating-vue'
+import openAddDetectorModal from '@/assets/js/openAddDetectorModal';
 // @ts-ignore
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
@@ -10,12 +11,12 @@ const props = defineProps({
 </script>
 
 <template>
-    <div class="empty-detector-card" id="" v-tooltip="t('system.add_detector')" v-if="enabled">
+    <div class="empty-detector-card" v-tooltip="t('system.add_detector')" v-if="enabled" @click="openAddDetectorModal">
         <div class="content">
             <font-awesome-icon :icon="['fas', 'plus']" />
         </div>
     </div>
-    <div class="empty-detector-card-disabled" id="" v-tooltip="t('system.no_zones_configured')" v-else>
+    <div class="empty-detector-card-disabled" v-tooltip="t('system.no_zones_configured')" v-else>
         <div class="content">
             <font-awesome-icon :icon="['fas', 'plus']" />
         </div>

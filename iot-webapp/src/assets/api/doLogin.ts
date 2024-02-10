@@ -12,6 +12,7 @@ export default async function doLogin(username: string, password: string) {
 
     if (response && response.ok) {
         const data = await response.json();
+        if (data.status === false) return false;
         setToken(data.access_token);
         let token_parts = data.access_token.split('.');
         let payload = JSON.parse(atob(token_parts[1]));
