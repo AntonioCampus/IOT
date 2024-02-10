@@ -66,7 +66,7 @@ INSERT INTO users (user, pass,isAdmin) VALUES ('admin',
                     '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
                     true);
 
-INSERT INTO users (user, pass,isAdmin) VALUES ('user', 
+/* INSERT INTO users (user, pass,isAdmin) VALUES ('user', 
                     '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
                     false); 
 
@@ -105,5 +105,5 @@ insert into alerts (zoneId,deviceId, status, time) values (1,1, true, '2024-01-2
 insert into alerts (zoneId,deviceId, status, time) values (1,1, false, '2024-04-29 11:06:01');
 insert into alerts (zoneId,deviceId, status, time) values (1,1, false, '2024-06-29 11:06:01');
 insert into alerts (zoneId,deviceId, status, time) values (1,1, false, '2024-08-29 11:06:01');
-
+ */
 
