@@ -17,6 +17,9 @@ from flask_jwt_extended import create_access_token,\
 
 API_NAME="/api/devices"
 
+""""
+Route to handle device login
+"""
 
 @app.route(API_NAME+"/login",methods=['GET', 'POST'])
 def loginDevice():
@@ -24,6 +27,7 @@ def loginDevice():
         return jsonify({"msg": "Send post request"})
     
     if request.method == 'POST':
+        # get and check the post parameters
         user = request.json.get("idname", None)
         password = request.json.get("passcode", None)
 
@@ -31,20 +35,17 @@ def loginDevice():
            password == None):
             return jsonify({"error":"Invalid paramters"})
         
-
+        # login procedure, check if the device exists
         password_hash = hash.hash_256(password)
-
         cursor = db.OpenConnection().cursor()
-
         query = "SELECT * FROM devices WHERE idname=? AND passcode=?"
-
         device=cursor.execute(query, (user, password_hash)).fetchone()
-
-
+        
+        #if the device doen't exists
         if device==None:
             return jsonify({"error": "Wrong credentials"}),401
         
-        
+        # if the device exists, create the JWT and send on the reponse
         additional_claims = {"zone": list(device)[3],
                              "DeviceId":list(device)[0]}
 
@@ -57,7 +58,9 @@ def loginDevice():
         return resp,200
 
 
-
+""""
+Route to handle device ellimination
+"""
 
 @app.route(API_NAME+"/remove",methods=['GET', 'POST'])
 @jwt_required()
@@ -65,10 +68,13 @@ def RemoveDevice():
     if request.method == 'GET':
         return jsonify({"msg": "Send post request"})
     if request.method == 'POST':
+        # access control 
         isAdmin = get_jwt()["isAdmin"]
         if(isAdmin != True):
            return jsonify({"error":"Invalid privilages",
                            "status":False})
+        
+        # get and check the post parameters
         deviceId = request.json.get("deviceId", None)
         deviceType = request.json.get("type", None)
 
@@ -76,12 +82,11 @@ def RemoveDevice():
            deviceType == None):
             return jsonify({"error":"Invalid paramters"})
 
+        # delete the device
         conn = db.OpenConnection()
         cursor = conn.cursor()
         
         query2 = "DELETE FROM devices WHERE id = ?"
-
-
         if(deviceType == "actuator"):
             query1 = "DELETE FROM actuators WHERE id=?"
         elif(deviceType == "detector"):
@@ -100,6 +105,9 @@ def RemoveDevice():
 
         return jsonify({"status":True})
 
+""""
+Route to list devices all
+"""
 @app.route(API_NAME+"/",methods=['GET'])
 def GetDevices():
     cursor = db.OpenConnection().cursor()
@@ -107,7 +115,9 @@ def GetDevices():
     data=cursor.execute(query).fetchall()
     return jsonify(data),200
 
-
+""""
+Route to list only all the detectors
+"""
 @app.route(API_NAME+"/listdetectors",methods=['GET'])
 def GetDetector():
     try:
@@ -118,6 +128,10 @@ def GetDetector():
     except:
         return jsonify({"error": "Getting detectors",
                         "status":False})
+
+""""
+Route to list only all the actuators
+"""
 
 @app.route(API_NAME+"/listactuators",methods=['GET'])
 def GetActuators():
@@ -130,7 +144,10 @@ def GetActuators():
          return jsonify({"error": "Getting Actuators",
                         "status":False})
 
-    
+
+""""
+Route to add new device
+"""
 
 @app.route(API_NAME+"/add",methods=['GET', 'POST'])
 @jwt_required()
@@ -139,11 +156,13 @@ def addDevice():
         return jsonify({"msg": "Send post request"})
     
     if request.method == 'POST':
+        # access control 
         isAdmin = get_jwt()["isAdmin"]
         if(isAdmin != True):
            return jsonify({"error":"Invalid privilages",
                            "status":False})
-        print("request",request.json)
+
+        # get and check the post parameters
         idname = request.json.get("idname", None)
         passcode = request.json.get("passcode", None)
         zone = request.json.get("zone", None)
@@ -157,7 +176,7 @@ def addDevice():
             return jsonify({"error":"Invalid paramters",
                             "status":False})
 
-
+        # create new device
         password_hash = hash.hash_256(passcode)
         conn = db.OpenConnection()
         cursor = conn.cursor()
@@ -190,9 +209,10 @@ def addDevice():
         return jsonify({"status":status})
 
 
-
+""""
+Route to hanlde image classification
+"""
        
-
 @app.route('/api/devices/classify',methods=['GET', 'POST'])
 @jwt_required()
 def classifyImage():
@@ -200,15 +220,18 @@ def classifyImage():
         return jsonify({"Warning":"Send post request",
                         "status":False})
     if request.method == 'POST':
+        # get and check the post parameters
         if("file" in request.files):
             current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             image=request.files["file"]
+            #classify the image
             status =  detector.DetectBird(image)
             # Extract the zone from the jwt of the device
             # and use it as topic for MQTT 
             zoneId = get_jwt()["zone"]
             DeviceId = get_jwt()["DeviceId"]
 
+            # check if there are actuator on the "zoneId" zone and fire a MQTT message
             query = "SELECT * FROM devices WHERE id IN (SELECT id FROM actuators) AND zone = ?"
             conn = db.OpenConnection()
             cursor = conn.cursor()
