@@ -13,7 +13,9 @@ from flask import jsonify
 
 
 API_NAME="/api/zones"
-
+""""
+Route to list zone
+"""
 @app.route(API_NAME,methods=['GET'])
 def getZone():
     cursor = db.OpenConnection().cursor()
@@ -21,7 +23,9 @@ def getZone():
     data=cursor.execute(query).fetchall()
     return jsonify(data),200
 
-
+""""
+Route to add new zone
+"""
 @app.route(API_NAME+"/add",methods=['GET',"POST"])
 def addZone():
     if request.method == 'GET':

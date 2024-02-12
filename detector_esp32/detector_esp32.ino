@@ -1,12 +1,9 @@
-/*
-  Rui Santos
-  Complete project details at https://RandomNerdTutorials.com/esp32-cam-post-image-photo-server/
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files.
-
-  The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software.
+/**
+ * DETECTOR IMPLEMENTATION based on ESP32-CAM MODULE
+ * IoT Class project - Antonio Campus & Nicola Deidda
+ * 
+ * A.Y. 2023/2024
+ * University of Cagliari
 */
 
 #include <Arduino.h>
@@ -15,20 +12,53 @@
 #include "soc/rtc_cntl_reg.h"
 #include "esp_camera.h"
 #include <HTTPClient.h>
+#include <ArduinoJson.h>
 
+/**
+ * CONFIG
+ */
+
+const char* jsonPayload = "{\"idname\":\"detector1\", \"passcode\":\"123\"}"; //SET DETECTOR ID AND PASSCODE BEFORE START
+const int delay_time = 1000*60; // 1000 = 1s
+
+// NETWORK PARAMETERS
 const char* ssid = "Casa";
 const char* password = "12345678";
 
-char * server = "192.168.43.172";
-String serverPath = "/api/devices/classify";     // The default serverPath should be upload.php
+// API PARAMETERS
+#define LOCALHOST 1 // 0 -> provide URL | 1 -> provide IP address + port
+#define USE_HTTPS 0 // 0 -> HTTP | 1 -> HTTPS
 
-const int serverPort = 5000;
+String serverPath = "/api/devices/classify"; 
+String authPath = "api/devices/login";
+
+#if USE_HTTPS
+  String protocol = "https";
+#else 
+  String protocol = "http";
+#endif
+
+#if LOCALHOST
+  char * server = "192.168.43.172";
+  const int serverPort = 5000;
+  String url = String(protocol) + "://" + String(server) + ":" + String(serverPort) + String(serverPath);
+  String jwt_url = String(protocol) + "://" + String(server) + ":" + String(serverPort) + String(authPath);
+#else
+  char * server = "example.com";
+  String url = String(protocol) + "://" + String(server) + String(serverPath);
+  String jwt_url = String(protocol) + "://" + String(server) + String(authPath);
+#endif
+
+// JWT
+String accessToken;
 
 HTTPClient http;
-String url = "http://" + String(server) + ":" + String(serverPort) + String(serverPath);
 
 String fileName = "image.jpg";
 String contentType = "image/jpeg";
+
+// CAMERA
+camera_config_t config;
 
 // CAMERA_MODEL_AI_THINKER
 #define PWDN_GPIO_NUM     32
@@ -52,24 +82,28 @@ String contentType = "image/jpeg";
 const int timerInterval = 30000;    // time between each HTTP POST image
 unsigned long previousMillis = 0;   // last time image was sent
 
-void setup() {
-  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
-  Serial.begin(115200);
-
+void setup_wifi() {
   WiFi.mode(WIFI_STA);
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
+  
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
+    // try until WiFi is connected
     Serial.print(".");
     delay(500);
   }
   Serial.println();
   Serial.print("ESP32-CAM IP Address: ");
   Serial.println(WiFi.localIP());
+}
 
-  camera_config_t config;
+void config_camera() {
+  /**
+   * CAMERA CONFIGURATION
+   * Each pin is mapped to SoC GPIOs
+  */
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
   config.pin_d0 = Y2_GPIO_NUM;
@@ -101,15 +135,28 @@ void setup() {
     config.jpeg_quality = 12;  //0-63 lower number means higher quality
     config.fb_count = 1;
   }
+}
+
+void setup() {
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+  Serial.begin(115200);
+
+  // Start connecting to WiFi
+  setup_wifi();
+
+  // WiFi connected -> config & init camera
+  config_camera();
 
   // camera init
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK) {
+    // camera error - restart required
     Serial.printf("Camera init failed with error 0x%x", err);
     delay(1000);
     ESP.restart();
   }
-  
+
+  // customize camera parameters
   sensor_t * s = esp_camera_sensor_get();
   s->set_brightness(s, 1);     // -2 to 2
   s->set_contrast(s, 2);       // -2 to 2
@@ -133,6 +180,40 @@ void setup() {
   s->set_vflip(s, 0);          // 0 = disable , 1 = enable
   s->set_dcw(s, 1);            // 0 = disable , 1 = enable
   s->set_colorbar(s, 0);       // 0 = disable , 1 = enable
+
+  Serial.println("Get jwt");
+  // Get auth token
+  getJWT();  
+}
+
+void getJWT() {
+  HTTPClient http_jwt;
+  http_jwt.begin(jwt_url);
+  http_jwt.addHeader("Content-Type", "application/json");
+
+  // try authenticate to the server
+  int httpCode = http_jwt.POST(jsonPayload);
+  
+  if (httpCode > 0) {
+    if (httpCode == HTTP_CODE_OK) {
+      // auth success
+      String payload = http_jwt.getString();
+      DynamicJsonDocument doc(1024);
+      DeserializationError error = deserializeJson(doc, payload);
+
+      if (error) {
+        Serial.print("Failed to parse JSON: ");
+        Serial.println(error.c_str());
+      } else {
+        // Extract access_token -> is the JWT
+        const char * tmp = doc["access_token"];
+        accessToken = String(tmp);
+        Serial.println("JWT acquired - Device correctly authenticated");
+      }
+    } else Serial.printf("JWT - HTTP request failed with error code %d\n", httpCode);
+  } else Serial.println("JWT - HTTP request failed");
+
+  http_jwt.end();
 }
 
 void loop() {
@@ -145,6 +226,8 @@ String sendPhoto() {
   String getBody;
 
   camera_fb_t * fb = NULL;
+
+  // acquire image
   fb = esp_camera_fb_get();
   if (!fb) {
     Serial.println("Camera capture failed");
@@ -152,23 +235,26 @@ String sendPhoto() {
     ESP.restart();
   }
 
-  Serial.println("Sending POST request to: " + url);
-
+  // image ok -> send it to the server
   http.begin(url);
   http.addHeader("Content-Type", "multipart/form-data; boundary=----BBDetector");
+  http.addHeader("Authorization", "Bearer " + accessToken);
 
   String body = "";
+  // set body structure
   body += "------BBDetector\r\n";
   body += "Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"\r\n";
   body += "Content-Type: " + contentType + "\r\n\r\n";
 
+  // inject image in the body
   for (size_t i = 0; i < fb->len; i++) {
     body += (char)fb->buf[i];
   }
 
+  // close body content
   body += "\r\n------BBDetector--\r\n";
 
-  // Send the actual POST request with data
+  // Send the POST request with data
   int httpResponseCode = http.POST(body);
 
   // Check for a successful response
@@ -187,5 +273,5 @@ String sendPhoto() {
   // Close the connection
   http.end();
   esp_camera_fb_return(fb);
-  delay(5000);
+  delay(delay_time);
 }

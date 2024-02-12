@@ -1,3 +1,0 @@
-(fp_lib_table
-  (lib (name DcDc5VUp)(type KiCad)(uri ${KIPRJMOD}/LibMod/Indrek/DcDc5VUp.pretty)(options "")(descr ""))
-)
