@@ -21,9 +21,9 @@ jwt_manager = JWTManager(app)
 db =  Database(app.config["DATABASEPATH"],
                app.config["SQLSCHEMA"])
 
-
 detector = BDetector(app.config["MODEL_PATH"],
                                 app.config["PATH_TO_LABELS"])
+
 
 
 from app import routes

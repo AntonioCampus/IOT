@@ -1,3 +1,5 @@
-
 server/BirdDetector/datasets/
 server/BirdDetector/__pycache__
+server/BirdDetector/models/
+*.pyc
+*Zone.Identifier

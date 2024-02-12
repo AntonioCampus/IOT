@@ -19,7 +19,9 @@ from app.utils.hash import *
 API_NAME ="/api/users"
 
 
-
+""""
+Route to handle user login
+"""
 
 @app.route(API_NAME+"/login",methods=['GET',"POST"])
 def login():
@@ -27,15 +29,16 @@ def login():
         return jsonify({"msg": "Send post request"})
     
     if request.method == 'POST':
+
+        # get and check the post parameters
         user = request.json.get("user", None)
         password = request.json.get("password", None)
-
         if(user == None or 
            password == None):
             return jsonify({"error":"Invalid paramters",
                             "status":False})
 
-
+        # login procedure, check if the user exists
         password_hash = hash.hash_256(password)
         print(password_hash)
         cursor = db.OpenConnection().cursor()
@@ -43,10 +46,11 @@ def login():
         query = "SELECT * FROM users WHERE user=? AND pass=?"
         user=cursor.execute(query, (user, password_hash)).fetchone()
         
+        #if the user doen't exists
         if user==None:
             return jsonify({"error": "Wrong credentials",
                             "status":False})
-        
+        # if the user exists, create the JWT and send on the reponse
         user = list(user)
 
         additional_claims = {"isAdmin": user[3],
@@ -58,6 +62,9 @@ def login():
         session["access_token"] = access_token
         return jsonify({"access_token":access_token})
 
+""""
+Route to handle user registration
+"""
 
 @app.route(API_NAME+"/register",methods=['GET',"POST"])
 @jwt_required()
@@ -66,11 +73,12 @@ def register():
         return message("Send Post Request",None).jsonMSG()
     
     if request.method == 'POST':
+        # access control 
         isAdmin = get_jwt()["isAdmin"]
         if(isAdmin != True):
            return jsonify({"error":"Invalid privilages",
                            "status":False})
-        
+        # get and check the post parameters
         user = request.json.get("user", None)
         password = request.json.get("password", None)
         isAdmin = request.json.get("isAdmin",None)
@@ -81,6 +89,7 @@ def register():
             return jsonify({"error":"Invalid paramters",
                             "status":False})
 
+        # create new user
         password_hash = hash.hash_256(password)
 
         try:
@@ -95,6 +104,9 @@ def register():
                             "status":False})
 
 
+""""
+Route to list users
+"""
     
 @app.route(API_NAME+"/", methods=["GET","POST"])
 @jwt_required()
@@ -108,8 +120,10 @@ def GetUsers():
         jsonify({"error":"Getting Users",
                  "status":False})
 
-    
 
+""""
+Route to remove user
+"""
 @app.route(API_NAME+"/remove", methods=["GET","POST"])
 @jwt_required()
 def removeUser():
@@ -118,17 +132,18 @@ def removeUser():
         return jsonify({"msg": "Send post request"})
 
     if request.method == 'POST':
+        # access control 
         isAdmin = get_jwt()["isAdmin"]
         if(isAdmin != True):
            return jsonify({"error":"Invalid privilages",
                            "status":False})
-        
+        # get and check the post parameters
         UserId = request.json.get("UserId", None)
-
         if(UserId == None):
             return jsonify({"error":"Invalid paramters",
                             "status":False})
 
+        # delete user
         conn = db.OpenConnection()
         cursor = conn.cursor()
         
@@ -144,6 +159,10 @@ def removeUser():
         return jsonify({"status":status})
 
 
+""""
+Route to allow users to list ovverides
+"""
+
 @app.route(API_NAME+"/listoverrides",methods=['GET'])
 #@jwt_required()
 def ListOvverride():
@@ -158,8 +177,9 @@ def ListOvverride():
 
    
 
-
-
+""""
+Route to allow privilaged user to manually fire an alert ("ovverides")
+"""
 @app.route(API_NAME+"/override",methods=['GET', 'POST'])
 @jwt_required()
 def boom():
@@ -169,18 +189,18 @@ def boom():
     if request.method == 'POST':
         zone = request.json.get("zone", None)
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
+        # access control 
         userid = get_jwt()["userId"]
         isAdmin = get_jwt()["isAdmin"]
         if(isAdmin != True):
            return jsonify({"error":"Invalid privilages",
                            "status":False})
         
-
+        # get and check the post parameters
         if(zone == None):
             return jsonify({"error":"Invalid paramters",
                             "status":False})
-        
+        # ovveriding operation on a specific zone
         try:
             MQTT.publish(app.config["BROKER_ADDR"],
                     app.config["BROKER_PORT"],
@@ -190,7 +210,7 @@ def boom():
             return jsonify({"error":"Mqtt Error",
                             "status":False})
         
-
+        # log the operation on the database
         try:
             conn = db.OpenConnection()
             cursor = conn.cursor()
@@ -203,7 +223,9 @@ def boom():
             return jsonify({"error":"Logging Ovveride",
                             "status":False})
 
-
+""""
+Route to retrive the alerts
+"""
 @app.route(API_NAME+"/dashboard")
 @jwt_required()
 def dashboard():
