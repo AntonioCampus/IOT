@@ -9,8 +9,8 @@ export default {
     /**
      * API SETTINGS
      */
-    //API_URL: 'https://10dd-147-33-231-30.ngrok-free.app'+'/api',
-    API_URL: 'http://localhost:5000/api',
+    API_URL: 'https://7e29-78-209-219-248.ngrok-free.app' + '/api',
+    //API_URL: 'http://localhost:5000/api',
 
     /**
      * TELEGRAM SETTINGS

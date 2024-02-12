@@ -72,7 +72,7 @@ onMounted(async () => {
   const response = await getDashboard();
   if (response != null) {
     detections_list.value = response;
-    console.log(detections_list.value);
+    detections_list.value.sort((a, b) => b[0] - a[0]);
     alerts_list.value = detections_list.value.filter((detection) => detection[3] == 1);
     active_detectors.value = countUnique(detections_list.value.map((detection) => detection[1]));
     detections_today.value = getDetectionsDay(detections_list.value).length;
@@ -150,7 +150,7 @@ function openAlertsPage() {
         <NoResultCard v-if="detections_list.length == 0" :label="t('dashboard.no_detections')" />
         <div class="alerts-list" v-else>
           <DetectionCard v-for="detection in detections_list" :id="detection[0]" :date="detection[4]"
-            :device="detection[2]" :zone="detection[3]" />
+            :device="detection[2]" :zone="detection[1]" />
         </div>
       </section>
     </div>

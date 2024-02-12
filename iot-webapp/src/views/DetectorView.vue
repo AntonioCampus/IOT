@@ -103,7 +103,7 @@ onMounted(async () => {
     <main v-else>
         <section id="header">
             <SectionTitle :title="detector[1]" />
-            <div class="tools"> <!--v-if="useUserStore().isAdmin"-->
+            <div class="tools" v-if="useUserStore().isAdmin">
                 <button class="danger" @click="openDeleteDetectorModal(router.currentRoute.value.params.id as string)">
                     <font-awesome-icon :icon="['fas', 'trash']" /> {{ t('system.remove_detector') }}
                 </button>
@@ -113,8 +113,8 @@ onMounted(async () => {
                 <AlertDataRow :icon="['fas', 'location-dot']" :label="t('common.zone')"
                     :data="zone[1] + ' (ID: ' + zone[0] + ')'" />
                 <AlertDataRow :icon="['fas', 'clock-rotate-left']" :label="t('system.last_activity')"
-                    :data="last_activity" />
-                <AlertDataRow :icon="['fas', 'camera']" :label="t('system.last_result')" :data="last_result" />
+                    :data="last_activity[4]" />
+                <AlertDataRow :icon="['fas', 'camera']" :label="t('system.last_result')" :data="last_result[4]" />
                 <AlertDataRow :icon="['fas', 'crow']" :label="t('system.detection_rate')" :data="detection_rate" />
             </div>
         </section>

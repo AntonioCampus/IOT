@@ -20,6 +20,7 @@ onMounted(async () => {
     const response = await getDashboard();
     if (response != null) {
         detections_list.value = response;
+        detections_list.value.sort((a, b) => b[0] - a[0])
         loading.value = false;
     }
 
