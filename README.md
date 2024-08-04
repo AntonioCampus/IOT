@@ -1,3 +1,7 @@
+
+## DESCRITPION
+BirdBuster is an application that uses a machine learning model to detect birds on runways
+
 ## CONFIGURE AND RUN THE APPLICATION
 
 To run the application, it is mandatory to follow the steps below:
